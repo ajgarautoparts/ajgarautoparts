@@ -751,13 +751,22 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-image: url("https://i.ytimg.com/vi/8xFbFqJ1mss/maxresdefault.jpg");
-  width: 95%;
+  background-image: url("https://images.squarespace-cdn.com/content/v1/5e8781c8c7360c384ae0968d/1587462878596-SIA9LO494I1QM1B7DW95/classic-banner.jpg?format=2500w");
+  width: 90%;
   height: 70vh;
   margin: auto;
   border-radius: 10px;
   background-size: cover;
   background-position: center;
+}
+
+#banner-2 h2{
+  color: white;
+  text-shadow: 2px 2px 5px #000000;
+}
+
+#banner-2 h4{
+  margin-bottom: 15px;
 }
 
 #banner{
