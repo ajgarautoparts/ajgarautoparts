@@ -2260,3 +2260,31 @@ footer p{
   padding-left: 50px;
   padding-right: 50px;
 }
+/* PRODUCT PRICE STYLE */
+.product-section{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:40px 0;
+}
+
+.product-card{
+  width:220px;
+  padding:15px;
+  border:1px solid #ddd;
+  text-align:center;
+  background:#fff;
+}
+
+.product-card img{
+  width:100%;
+  height:auto;
+}
+
+.price{
+  font-size:18px;
+  font-weight:bold;
+  color:#d60000;
+  margin-top:5px;
+}
