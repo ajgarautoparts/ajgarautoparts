@@ -14,42 +14,27 @@
 <button onclick="register()">Register</button>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { initializeApp } from 
+  "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
   import { 
     getAuth,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  } from 
+  "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCvJ1h4CYZFr9h2005zaxl...",
+    apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
     authDomain: "ajgar-auto-parts.firebaseapp.com",
     projectId: "ajgar-auto-parts",
     storageBucket: "ajgar-auto-parts.appspot.com",
     messagingSenderId: "504184526438",
-    appId: "1:504184526438:web:fd970aa4..."
+    appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
   };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-
-  window.register = function () {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(() => alert("REGISTER SUCCESS"))
-      .catch(error => alert(error.message));
-  };
-
-  window.login = function () {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => alert("LOGIN SUCCESS"))
-      .catch(error => alert(error.message));
-  };
 </script>
 
 </body>
