@@ -38,16 +38,22 @@
     const password = document.getElementById("password").value;
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => alert("REGISTER SUCCESS"))
+      .then(() => {
+  alert("REGISTER SUCCESS");
+  window.location.href = "index.html";
+})
       .catch(err => alert("ERROR: " + err.code));
   });
 
   document.getElementById("loginBtn").addEventListener("click", () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then(() => alert("LOGIN SUCCESS"))
+signInWithEmailAndPassword(auth, email, password)
+  .then(() => {
+    alert("LOGIN SUCCESS");
+    window.location.href = "index.html";
+  })
+  .catch(err => alert("ERROR: " + err.code));
       .catch(err => alert("ERROR: " + err.code));
   });
 </script>
