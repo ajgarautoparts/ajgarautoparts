@@ -1,61 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Ajgar Auto Parts</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+body{
+  min-height:100vh;
+  display:flex;
+}
+.left{
+  width:50%;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:60px;
+}
+.left h1{
+  font-size:42px;
+  margin-bottom:20px;
+}
+.left p{
+  opacity:.85;
+  margin-bottom:25px;
+}
+.left ul{
+  list-style:none;
+}
+.left ul li{
+  margin-bottom:10px;
+}
+.right{
+  width:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#f8fafc;
+}
+.login-box{
+  background:#fff;
+  width:100%;
+  max-width:380px;
+  padding:35px;
+  border-radius:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,.12);
+}
+.login-box h2{
+  margin-bottom:8px;
+}
+.login-box p{
+  font-size:14px;
+  color:#64748b;
+  margin-bottom:20px;
+}
+input{
+  width:100%;
+  padding:12px;
+  margin-bottom:14px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+}
+button{
+  width:100%;
+  padding:12px;
+  background:#0f172a;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+button:hover{
+  background:#1e293b;
+}
+.alt{
+  text-align:center;
+  margin-top:12px;
+  font-size:14px;
+}
+@media(max-width:768px){
+  body{flex-direction:column;}
+  .left{display:none;}
+  .right{width:100%;}
+}
+</style>
 </head>
+
 <body>
 
-<h2>Login / Register</h2>
+<div class="left">
+  <h1>Login Page</h1>
+  <p>Secure access for Ajgar Auto Parts customers.</p>
+  <ul>
+    <li>✔ Fully Secure</li>
+    <li>✔ Firebase Authentication</li>
+    <li>✔ Professional UI</li>
+    <li>✔ Mobile Friendly</li>
+  </ul>
+</div>
 
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Password (min 6 char)"><br><br>
+<div class="right">
+  <div class="login-box">
+    <h2>Welcome Back</h2>
+    <p>Login to continue</p>
 
-<button id="registerBtn">Register</button>
-<button id="loginBtn">Login</button>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button id="loginBtn">Login</button>
+    <div class="alt">or</div>
+    <button id="registerBtn" style="margin-top:10px;background:#16a34a">Register</button>
+  </div>
+</div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
-    authDomain: "ajgar-auto-parts.firebaseapp.com",
-    projectId: "ajgar-auto-parts",
-    storageBucket: "ajgar-auto-parts.appspot.com",
-    messagingSenderId: "504184526438",
-    appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+  authDomain: "ajgar-auto-parts.firebaseapp.com",
+  projectId: "ajgar-auto-parts",
+  storageBucket: "ajgar-auto-parts.appspot.com",
+  messagingSenderId: "504184526438",
+  appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  document.getElementById("registerBtn").addEventListener("click", () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+loginBtn.onclick = () => {
+  signInWithEmailAndPassword(auth,email.value,password.value)
+  .then(()=>location.href="index.html")
+  .catch(e=>alert(e.code));
+};
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-  alert("REGISTER SUCCESS");
-  window.location.href = "index.html";
-})
-      .catch(err => alert("ERROR: " + err.code));
-  });
-
-  document.getElementById("loginBtn").addEventListener("click", () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-signInWithEmailAndPassword(auth, email, password)
-  .then(() => {
-    alert("LOGIN SUCCESS");
-    window.location.href = "index.html";
-  })
-  .catch(err => alert("ERROR: " + err.code));
-      .catch(err => alert("ERROR: " + err.code));
-  });
+registerBtn.onclick = () => {
+  createUserWithEmailAndPassword(auth,email.value,password.value)
+  .then(()=>location.href="index.html")
+  .catch(e=>alert(e.code));
+};
 </script>
 
 </body>
