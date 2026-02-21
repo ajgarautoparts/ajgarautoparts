@@ -2288,3 +2288,59 @@ footer p{
   color:#d60000;
   margin-top:5px;
 }
+/* ================= LOGIN / USER STATUS FIX ================= */
+
+/* Header right auth box */
+.auth-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#ffffff;
+  padding:6px 14px;
+  border-radius:25px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+  font-size:14px;
+  font-weight:600;
+}
+
+/* User email text */
+#user-status{
+  color:#0f172a;
+  max-width:160px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Login button */
+.login-link{
+  background:#0f172a;
+  color:#fff !important;
+  padding:6px 14px;
+  border-radius:20px;
+  text-decoration:none;
+  font-weight:600;
+}
+
+/* Logout button */
+.logout-btn{
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* Hover */
+.login-link:hover{background:#1e293b}
+.logout-btn:hover{background:#b91c1c}
+
+/* Mobile fix */
+@media(max-width:768px){
+  .auth-box{
+    margin-top:10px;
+    justify-content:center;
+  }
+
