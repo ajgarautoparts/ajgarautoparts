@@ -124,32 +124,33 @@ button:hover{
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
-  authDomain: "ajgar-auto-parts.firebaseapp.com",
-  projectId: "ajgar-auto-parts",
-  storageBucket: "ajgar-auto-parts.appspot.com",
-  messagingSenderId: "504184526438",
-  appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+    authDomain: "ajgar-auto-parts.firebaseapp.com",
+    projectId: "ajgar-auto-parts",
+    storageBucket: "ajgar-auto-parts.appspot.com",
+    messagingSenderId: "504184526438",
+    appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-loginBtn.onclick = () => {
-  signInWithEmailAndPassword(auth,email.value,password.value)
-  .then(()=>location.href="index.html")
-  .catch(e=>alert(e.code));
-};
-
-registerBtn.onclick = () => {
-  createUserWithEmailAndPassword(auth,email.value,password.value)
-  .then(()=>location.href="index.html")
-  .catch(e=>alert(e.code));
-};
+  document.getElementById("googleBtn").onclick = () => {
+    signInWithPopup(auth, provider)
+      .then(() => {
+        window.location.href = "index.html";
+      })
+      .catch(err => alert(err.message));
+  };
 </script>
 
 </body>
