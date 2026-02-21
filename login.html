@@ -8,90 +8,48 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
-body{
-  min-height:100vh;
-  display:flex;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{min-height:100vh;display:flex}
 .left{
-  width:50%;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:60px;
+  width:50%;background:linear-gradient(135deg,#0f172a,#1e293b);
+  color:#fff;display:flex;flex-direction:column;
+  justify-content:center;padding:60px
 }
-.left h1{
-  font-size:42px;
-  margin-bottom:20px;
-}
-.left p{
-  opacity:.85;
-  margin-bottom:25px;
-}
-.left ul{
-  list-style:none;
-}
-.left ul li{
-  margin-bottom:10px;
-}
+.left h1{font-size:42px;margin-bottom:20px}
+.left p{opacity:.85;margin-bottom:25px}
+.left ul{list-style:none}
+.left ul li{margin-bottom:10px}
 .right{
-  width:50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#f8fafc;
+  width:50%;display:flex;justify-content:center;
+  align-items:center;background:#f8fafc
 }
 .login-box{
-  background:#fff;
-  width:100%;
-  max-width:380px;
-  padding:35px;
-  border-radius:14px;
-  box-shadow:0 20px 40px rgba(0,0,0,.12);
+  background:#fff;width:100%;max-width:380px;
+  padding:35px;border-radius:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,.12)
 }
-.login-box h2{
-  margin-bottom:8px;
-}
-.login-box p{
-  font-size:14px;
-  color:#64748b;
-  margin-bottom:20px;
-}
+.login-box h2{margin-bottom:8px}
+.login-box p{font-size:14px;color:#64748b;margin-bottom:20px}
 input{
-  width:100%;
-  padding:12px;
-  margin-bottom:14px;
-  border-radius:8px;
-  border:1px solid #cbd5e1;
+  width:100%;padding:12px;margin-bottom:14px;
+  border-radius:8px;border:1px solid #cbd5e1
 }
 button{
-  width:100%;
-  padding:12px;
-  background:#0f172a;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
+  width:100%;padding:12px;background:#0f172a;
+  color:#fff;border:none;border-radius:8px;
+  cursor:pointer
 }
-button:hover{
-  background:#1e293b;
+button:hover{background:#1e293b}
+.google-btn{
+  background:#fff;color:#000;border:1px solid #cbd5e1;
+  margin-top:12px
 }
-.alt{
-  text-align:center;
-  margin-top:12px;
-  font-size:14px;
-}
+.google-btn:hover{background:#f1f5f9}
+.alt{text-align:center;margin:12px 0;font-size:14px}
 @media(max-width:768px){
-  body{flex-direction:column;}
-  .left{display:none;}
-  .right{width:100%;}
+  body{flex-direction:column}
+  .left{display:none}
+  .right{width:100%}
 }
 </style>
 </head>
@@ -115,18 +73,29 @@ button:hover{
     <p>Login to continue</p>
 
     <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
+    <input type="password" id="password" placeholder="Password (min 6 chars)">
 
     <button id="loginBtn">Login</button>
+
     <div class="alt">or</div>
-    <button id="registerBtn" style="margin-top:10px;background:#16a34a">Register</button>
+
+    <button id="registerBtn" style="background:#16a34a">Register</button>
+
+    <button id="googleBtn" class="google-btn">
+      Continue with Google
+    </button>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider } 
-  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -141,16 +110,26 @@ button:hover{
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  document.getElementById("googleBtn").addEventListener("click", () => {
+  // EMAIL LOGIN
+  loginBtn.onclick = () => {
+    signInWithEmailAndPassword(auth, email.value, password.value)
+      .then(() => window.location.href = "index.html")
+      .catch(err => alert(err.code));
+  };
+
+  // REGISTER
+  registerBtn.onclick = () => {
+    createUserWithEmailAndPassword(auth, email.value, password.value)
+      .then(() => window.location.href = "index.html")
+      .catch(err => alert(err.code));
+  };
+
+  // GOOGLE LOGIN
+  googleBtn.onclick = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
-        alert("LOGIN SUCCESS");
-        window.location.href = "index.html";
-      })
-      .catch((error) => {
-        alert("ERROR: " + error.message);
-      });
-  });
+      .then(() => window.location.href = "index.html")
+      .catch(err => alert(err.code));
+  };
 </script>
 
 </body>
