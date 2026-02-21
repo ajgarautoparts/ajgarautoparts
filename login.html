@@ -125,11 +125,8 @@ button:hover{
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { 
-    getAuth, 
-    signInWithPopup, 
-    GoogleAuthProvider 
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider } 
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -144,13 +141,16 @@ button:hover{
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  document.getElementById("googleBtn").onclick = () => {
+  document.getElementById("googleBtn").addEventListener("click", () => {
     signInWithPopup(auth, provider)
-      .then(() => {
+      .then((result) => {
+        alert("LOGIN SUCCESS");
         window.location.href = "index.html";
       })
-      .catch(err => alert(err.message));
-  };
+      .catch((error) => {
+        alert("ERROR: " + error.message);
+      });
+  });
 </script>
 
 </body>
