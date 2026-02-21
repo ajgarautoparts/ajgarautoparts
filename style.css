@@ -2343,4 +2343,29 @@ footer p{
     margin-top:10px;
     justify-content:center;
   }
+/* LOGIN PROFILE HEADER */
+.auth-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.user-email{
+  font-size:14px;
+  font-weight:600;
+  color:#000;
+}
+
+.logout-btn{
+  padding:6px 12px;
+  background:#000;
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+.logout-btn:hover{
+  background:#d60000;
+}
 
