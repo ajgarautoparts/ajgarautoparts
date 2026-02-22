@@ -73,3 +73,45 @@ const cartKey = user ? "cart_" + user : "cart_guest";
 const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
 cartCount.textContent = cart.reduce((sum, p) => sum + p.qty, 0);
+
+/* ================= AUTO ADD TO CART (ALL PRODUCTS) ================= */
+
+document.addEventListener("click", function (e) {
+
+  const card = e.target.closest(".des-card");
+  if (!card) return;
+
+  const name = card.dataset.name;
+  const price = Number(card.dataset.price);
+  const image = card.dataset.image;
+
+  if (!name || !price) return;
+
+  const user = localStorage.getItem("loggedUser");
+  const cartKey = user ? "cart_" + user : "cart_guest";
+
+  let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+
+  const existing = cart.find(p => p.name === name);
+
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({
+      name: name,
+      price: price,
+      image: image,
+      qty: 1
+    });
+  }
+
+  localStorage.setItem(cartKey, JSON.stringify(cart));
+  alert(name + " added to cart");
+
+  // update cart count live
+  const cartCount = document.getElementById("cart-count");
+  if (cartCount) {
+    cartCount.textContent = cart.reduce((s, p) => s + p.qty, 0);
+  }
+
+});
