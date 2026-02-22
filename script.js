@@ -1,4 +1,4 @@
-/* ================= MENU TOGGLE ================= */
+/* ================= MENU ================= */
 const navToggle = document.getElementById("nav-toggle");
 const navMenu = document.getElementById("nav-menu");
 
@@ -8,17 +8,6 @@ if (navToggle && navMenu) {
     navToggle.classList.toggle("show-icon");
   });
 }
-
-/* ================= DROPDOWN ================= */
-const dropdownItems = document.querySelectorAll(".dropdown__item");
-
-dropdownItems.forEach((item) => {
-  const button = item.querySelector(".dropdown__button");
-
-  button.addEventListener("click", () => {
-    item.classList.toggle("show-dropdown");
-  });
-});
 
 /* ================= FIREBASE AUTH ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -60,58 +49,64 @@ onAuthStateChanged(auth, (user) => {
 });
 
 /* ================= LOGOUT ================= */
-logoutBtn.addEventListener("click", () => {
-  signOut(auth).then(() => {
-    window.location.reload();
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth).then(() => location.reload());
   });
-});
+}
 
-/* ================= CART COUNT ================= */
-const cartCount = document.getElementById("cart-count");
-const user = localStorage.getItem("loggedUser");
-const cartKey = user ? "cart_" + user : "cart_guest";
-const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+/* ================= CART SYSTEM ================= */
 
-cartCount.textContent = cart.reduce((sum, p) => sum + p.qty, 0);
-
-/* ================= AUTO ADD TO CART (ALL PRODUCTS) ================= */
-
-document.addEventListener("click", function (e) {
-
-  const card = e.target.closest(".des-card");
-  if (!card) return;
-
-  const name = card.dataset.name;
-  const price = Number(card.dataset.price);
-  const image = card.dataset.image;
-
-  if (!name || !price) return;
-
+function getCartKey() {
   const user = localStorage.getItem("loggedUser");
-  const cartKey = user ? "cart_" + user : "cart_guest";
+  return user ? "cart_" + user : "cart_guest";
+}
 
-  let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+function getCart() {
+  return JSON.parse(localStorage.getItem(getCartKey())) || [];
+}
 
-  const existing = cart.find(p => p.name === name);
+function saveCart(cart) {
+  localStorage.setItem(getCartKey(), JSON.stringify(cart));
+}
 
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({
-      name: name,
-      price: price,
-      image: image,
-      qty: 1
-    });
-  }
-
-  localStorage.setItem(cartKey, JSON.stringify(cart));
-  alert(name + " added to cart");
-
-  // update cart count live
+function updateCartCount() {
   const cartCount = document.getElementById("cart-count");
-  if (cartCount) {
-    cartCount.textContent = cart.reduce((s, p) => s + p.qty, 0);
-  }
+  if (!cartCount) return;
 
+  const cart = getCart();
+  cartCount.textContent = cart.reduce((t, p) => t + p.qty, 0);
+}
+
+/* ================= ADD TO CART (AUTO) ================= */
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("add-to-cart-btn")) {
+
+    const card = e.target.closest(".product-card");
+    const name = card.dataset.name;
+    const price = Number(card.dataset.price);
+    const image = card.dataset.image;
+
+    const user = localStorage.getItem("loggedUser");
+    if (!user) {
+      alert("Please login to add product");
+      location.href = "login.html";
+      return;
+    }
+
+    let cart = getCart();
+    let item = cart.find(p => p.name === name);
+
+    if (item) {
+      item.qty += 1;
+    } else {
+      cart.push({ name, price, image, qty: 1 });
+    }
+
+    saveCart(cart);
+    updateCartCount();
+    alert("Added to cart");
+  }
 });
+
+updateCartCount();
