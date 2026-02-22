@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Your Cart</title>
+<style>
+body{font-family:Arial;padding:20px;}
+.cart-item{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin-bottom:15px;
+}
+.cart-item img{
+  width:80px;
+}
+.total{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<h2>Your Cart</h2>
+<div id="cartList"></div>
+<div class="total" id="totalPrice"></div>
+
+<script>
+let user = localStorage.getItem("loggedUser");
+if(!user){
+  alert("Login required");
+  location.href="login.html";
+}
+
+let cart = JSON.parse(localStorage.getItem("cart_"+user)) || [];
+let cartList = document.getElementById("cartList");
+let total = 0;
+
+cart.forEach(p=>{
+  total += p.price * p.qty;
+  cartList.innerHTML += `
+    <div class="cart-item">
+      <img src="${p.image}">
+      <div>
+        <b>${p.name}</b><br>
+        ₹${p.price} × ${p.qty}
+      </div>
+    </div>
+  `;
+});
+
+document.getElementById("totalPrice").innerText =
+  "Total: ₹" + total;
+</script>
+
+</body>
+</html>
