@@ -88,48 +88,55 @@ button:hover{background:#1e293b}
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import {
-    getAuth,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithPopup
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
-    authDomain: "ajgar-auto-parts.firebaseapp.com",
-    projectId: "ajgar-auto-parts",
-    storageBucket: "ajgar-auto-parts.appspot.com",
-    messagingSenderId: "504184526438",
-    appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+  authDomain: "ajgar-auto-parts.firebaseapp.com",
+  projectId: "ajgar-auto-parts",
+  storageBucket: "ajgar-auto-parts.appspot.com",
+  messagingSenderId: "504184526438",
+  appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-  // EMAIL LOGIN
-  loginBtn.onclick = () => {
-    signInWithEmailAndPassword(auth, email.value, password.value)
-      .then(() => window.location.href = "index.html")
-      .catch(err => alert(err.code));
-  };
+/* ===== FIXED DECLARATIONS ===== */
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const googleBtn = document.getElementById("googleBtn");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
 
-  // REGISTER
-  registerBtn.onclick = () => {
-    createUserWithEmailAndPassword(auth, email.value, password.value)
-      .then(() => window.location.href = "index.html")
-      .catch(err => alert(err.code));
-  };
+/* ===== EMAIL LOGIN ===== */
+loginBtn.onclick = () => {
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => window.location.href = "index.html")
+    .catch(err => alert(err.message));
+};
 
-  // GOOGLE LOGIN
-  googleBtn.onclick = () => {
-    signInWithPopup(auth, provider)
-      .then(() => window.location.href = "index.html")
-      .catch(err => alert(err.code));
-  };
+/* ===== REGISTER ===== */
+registerBtn.onclick = () => {
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+    .then(() => window.location.href = "index.html")
+    .catch(err => alert(err.message));
+};
+
+/* ===== GOOGLE LOGIN ===== */
+googleBtn.onclick = () => {
+  signInWithPopup(auth, provider)
+    .then(() => window.location.href = "index.html")
+    .catch(err => alert(err.message));
+};
 </script>
 
 </body>
