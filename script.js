@@ -262,3 +262,4 @@ function addToCart(name, price, image){
   alert("Product added to cart");
 }
 </script>
+
