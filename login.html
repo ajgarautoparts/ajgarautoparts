@@ -88,42 +88,72 @@ button:hover{background:#1e293b}
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
-  authDomain: "ajgar-auto-parts.firebaseapp.com",
-  projectId: "ajgar-auto-parts",
-  storageBucket: "ajgar-auto-parts.appspot.com",
-  messagingSenderId: "504184526438",
-  appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+    authDomain: "ajgar-auto-parts.firebaseapp.com",
+    projectId: "ajgar-auto-parts",
+    storageBucket: "ajgar-auto-parts.appspot.com",
+    messagingSenderId: "504184526438",
+    appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-const userStatus = document.getElementById("user-status");
-const loginLink = document.getElementById("loginLink");
-const logoutBtn = document.getElementById("logoutBtn");
+  // 🔥 DOM ELEMENTS (THIS WAS MISSING)
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+  const googleBtn = document.getElementById("googleBtn");
 
-onAuthStateChanged(auth, user => {
-  if (user) {
-    userStatus.textContent = user.email;
-    loginLink.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-    localStorage.setItem("loggedUser", user.email);
-  } else {
-    userStatus.textContent = "";
-    loginLink.style.display = "inline-block";
-    logoutBtn.style.display = "none";
-    localStorage.removeItem("loggedUser");
-  }
-});
+  // LOGIN
+  loginBtn.addEventListener("click", async () => {
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+      window.location.href = "index.html";
+    } catch (e) {
+      alert(e.message);
+    }
+  });
 
-logoutBtn.onclick = () => {
-  signOut(auth);
-};
+  // REGISTER
+  registerBtn.addEventListener("click", async () => {
+    try {
+      await createUserWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+      window.location.href = "index.html";
+    } catch (e) {
+      alert(e.message);
+    }
+  });
+
+  // GOOGLE LOGIN
+  googleBtn.addEventListener("click", async () => {
+    try {
+      await signInWithPopup(auth, provider);
+      window.location.href = "index.html";
+    } catch (e) {
+      alert(e.message);
+    }
+  });
 </script>
 
 </body>
