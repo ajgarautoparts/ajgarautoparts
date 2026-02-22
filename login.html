@@ -89,13 +89,7 @@ button:hover{background:#1e293b}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -108,34 +102,27 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
-/* ===== FIXED DECLARATIONS ===== */
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const googleBtn = document.getElementById("googleBtn");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
+const userStatus = document.getElementById("user-status");
+const loginLink = document.getElementById("loginLink");
+const logoutBtn = document.getElementById("logoutBtn");
 
-/* ===== EMAIL LOGIN ===== */
-loginBtn.onclick = () => {
-  signInWithEmailAndPassword(auth, email.value, password.value)
-    .then(() => window.location.href = "index.html")
-    .catch(err => alert(err.message));
-};
+onAuthStateChanged(auth, user => {
+  if (user) {
+    userStatus.textContent = user.email;
+    loginLink.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    localStorage.setItem("loggedUser", user.email);
+  } else {
+    userStatus.textContent = "";
+    loginLink.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    localStorage.removeItem("loggedUser");
+  }
+});
 
-/* ===== REGISTER ===== */
-registerBtn.onclick = () => {
-  createUserWithEmailAndPassword(auth, email.value, password.value)
-    .then(() => window.location.href = "index.html")
-    .catch(err => alert(err.message));
-};
-
-/* ===== GOOGLE LOGIN ===== */
-googleBtn.onclick = () => {
-  signInWithPopup(auth, provider)
-    .then(() => window.location.href = "index.html")
-    .catch(err => alert(err.message));
+logoutBtn.onclick = () => {
+  signOut(auth);
 };
 </script>
 
