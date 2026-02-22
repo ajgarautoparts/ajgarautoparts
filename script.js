@@ -1,136 +1,51 @@
-/* ================= MOBILE NAV TOGGLE ================= */
-const navToggle = document.getElementById("nav-toggle");
-const navMenu = document.getElementById("nav-menu");
+/* ========= FIREBASE AUTH HEADER CONTROL ========= */
 
-if (navToggle && navMenu) {
-  navToggle.addEventListener("click", () => {
-    navMenu.classList.toggle("show-menu");
-    navToggle.classList.toggle("show-icon");
-  });
-}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* ================= DROPDOWN MENU ================= */
-const dropdownItems = document.querySelectorAll(".dropdown__item");
+const firebaseConfig = {
+  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+  authDomain: "ajgar-auto-parts.firebaseapp.com",
+  projectId: "ajgar-auto-parts",
+  storageBucket: "ajgar-auto-parts.appspot.com",
+  messagingSenderId: "504184526438",
+  appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
+};
 
-dropdownItems.forEach((item) => {
-  const dropdownButton = item.querySelector(".dropdown__button");
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  if (dropdownButton) {
-    dropdownButton.addEventListener("click", () => {
-      const openItem = document.querySelector(".show-dropdown");
-      toggleDropdown(item);
+const userStatus = document.getElementById("user-status");
+const loginLink = document.getElementById("loginLink");
+const logoutBtn = document.getElementById("logoutBtn");
 
-      if (openItem && openItem !== item) {
-        toggleDropdown(openItem);
-      }
-    });
+/* ===== AUTH STATE ===== */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // LOGIN SUCCESS
+    userStatus.innerText = user.email;
+    loginLink.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+
+    // save for cart
+    localStorage.setItem("loggedUser", user.email);
+  } else {
+    // LOGOUT
+    userStatus.innerText = "";
+    loginLink.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+
+    localStorage.removeItem("loggedUser");
   }
 });
 
-function toggleDropdown(item) {
-  const container = item.querySelector(".dropdown__container");
-
-  if (item.classList.contains("show-dropdown")) {
-    container.removeAttribute("style");
-    item.classList.remove("show-dropdown");
-  } else {
-    container.style.height = container.scrollHeight + "px";
-    item.classList.add("show-dropdown");
-  }
-}
-
-/* RESET DROPDOWN ON DESKTOP */
-const mediaQuery = window.matchMedia("(min-width: 1118px)");
-window.addEventListener("resize", () => {
-  if (mediaQuery.matches) {
-    document
-      .querySelectorAll(".dropdown__container")
-      .forEach((el) => el.removeAttribute("style"));
-    dropdownItems.forEach((el) => el.classList.remove("show-dropdown"));
-  }
+/* ===== LOGOUT ===== */
+logoutBtn.addEventListener("click", () => {
+  signOut(auth).then(() => {
+    window.location.href = "index.html";
+  });
 });
-
-/* ================= SIMPLE SLIDER ================= */
-let slideIndex = 0;
-function showSlides() {
-  const slides = document.getElementsByClassName("mySlides");
-  if (!slides.length) return;
-
-  for (let i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";
-  }
-
-  slideIndex++;
-  if (slideIndex > slides.length) slideIndex = 1;
-
-  slides[slideIndex - 1].style.display = "block";
-  setTimeout(showSlides, 4000);
-}
-showSlides();
-
-/* ================= IMAGE SCROLL SLIDER ================= */
-function initSlider() {
-  const imageList = document.querySelector(".slider-wrapper .image-list");
-  const slideButtons = document.querySelectorAll(".slide-button");
-  const scrollbarThumb = document.querySelector(".scrollbar-thumb");
-  const scrollbar = document.querySelector(".slider-scrollbar");
-
-  if (!imageList || !scrollbarThumb || !scrollbar) return;
-
-  const maxScrollLeft = imageList.scrollWidth - imageList.clientWidth;
-
-  slideButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const dir = btn.id === "prev-slide" ? -1 : 1;
-      imageList.scrollBy({
-        left: imageList.clientWidth * dir,
-        behavior: "smooth",
-      });
-    });
-  });
-
-  imageList.addEventListener("scroll", () => {
-    const pos =
-      (imageList.scrollLeft / maxScrollLeft) *
-      (scrollbar.clientWidth - scrollbarThumb.offsetWidth);
-    scrollbarThumb.style.left = pos + "px";
-  });
-}
-
-window.addEventListener("load", initSlider);
-window.addEventListener("resize", initSlider);
-
-/* ================= CART SYSTEM ================= */
-let currentUser = localStorage.getItem("loggedUser");
-
-function getCartKey() {
-  return currentUser ? "cart_" + currentUser : "cart_guest";
-}
-
-function getCart() {
-  return JSON.parse(localStorage.getItem(getCartKey())) || [];
-}
-
-function saveCart(cart) {
-  localStorage.setItem(getCartKey(), JSON.stringify(cart));
-}
-
-function addToCart(name, price, image) {
-  if (!currentUser) {
-    alert("Please login first");
-    window.location.href = "login.html";
-    return;
-  }
-
-  let cart = getCart();
-  let item = cart.find((p) => p.name === name);
-
-  if (item) {
-    item.qty++;
-  } else {
-    cart.push({ name, price, image, qty: 1 });
-  }
-
-  saveCart(cart);
-  alert("Added to cart");
-}
