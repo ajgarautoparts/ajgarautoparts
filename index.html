@@ -33,91 +33,60 @@
                 <!--=============== NAV MENU ===============-->
                 <div class="nav__menu" id="nav-menu">
                     <ul class="nav__list">
-                        <li>
-  <span id="user-email" class="nav__link"></span>
-</li>
 
-<li>
-  <a href="login.html" id="loginLink" class="nav__link">Login</a>
-</li>
+  <!-- USER STATUS -->
+  <li class="nav__item">
+    <span id="user-email" class="nav__link"></span>
+  </li>
 
-<li>
-  <a href="cart.html" class="nav__link">
-    Cart (<span id="cart-count">0</span>)
-  </a>
-</li>
+  <!-- LOGIN -->
+  <li class="nav__item" id="loginItem">
+    <a href="login.html" class="nav__link">Login</a>
+  </li>
 
-<li>
-  <button id="logoutBtn" class="nav__link" style="display:none">
-    Logout
-  </button>
-</li>
-                         
-  <a href="contact.html" class="nav__link">Store Locator</a>
-</li>
+  <!-- CART -->
+  <li class="nav__item">
+    <a href="cart.html" class="nav__link">
+      Cart (<span id="cart-count">0</span>)
+    </a>
+  </li>
 
-<li>
-  <a href="cart.html" class="nav__link">Cart</a>
-</li>
-                        
-<li>
-  <a href="login.html" class="nav__link">Login</a>
-</li>
+  <!-- LOGOUT -->
+  <li class="nav__item" id="logoutItem" style="display:none">
+    <button id="logoutBtn" class="nav__link">Logout</button>
+  </li>
 
-<li id="user-status" class="nav__link"></li>
-                        <!--<li>
-                            <a href="index.html" class="nav__link">Home</a>
-                        </li>-->
+  <!-- STORE -->
+  <li class="nav__item">
+    <a href="contact.html" class="nav__link">Store Locator</a>
+  </li>
 
-                        <!--=============== DROPDOWN 1 ===============-->
-                        <li class="dropdown__item">                      
-                            <div class="nav__link dropdown__button">
-                                Categories <i class="ri-arrow-down-s-line dropdown__arrow"></i>
-                            </div>
+  <!-- CATEGORY -->
+  <li class="dropdown__item">
+    <div class="nav__link dropdown__button">
+      Categories <i class="ri-arrow-down-s-line dropdown__arrow"></i>
+    </div>
 
-                            <div class="dropdown__container">
-                                <div class="dropdown__content">
-    
-                                    <div class="dropdown__group">
-                                        <!--<div class="dropdown__icon">
-                                            <i class="ri-heart-3-line"></i>
-                                        </div>-->
-    
-                                        <span class="dropdown__title">SHOP BY CATEGORIES</span>
-    
-                                        <ul class="dropdown__list">
-                                            <li>
-                                                <a href="protection.html" class="dropdown__link">Protection</a>
-                                            </li>
+    <div class="dropdown__container">
+      <div class="dropdown__content">
+        <div class="dropdown__group">
+          <span class="dropdown__title">SHOP BY CATEGORIES</span>
+          <ul class="dropdown__list">
+            <li><a href="protection.html" class="dropdown__link">Protection</a></li>
+            <li><a href="seats.html" class="dropdown__link">Seats</a></li>
+            <li><a href="bodywork.html" class="dropdown__link">Bodywork</a></li>
+            <li><a href="luggage.html" class="dropdown__link">Luggage</a></li>
+            <li><a href="engine.html" class="dropdown__link">Engine</a></li>
+            <li><a href="controls.html" class="dropdown__link">Controls</a></li>
+            <li><a href="electrical.html" class="dropdown__link">Electrical</a></li>
+            <li><a href="maintenance.html" class="dropdown__link">Maintenance</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </li>
 
-                                            <li>
-                                                <a href="seats.html" class="dropdown__link">Seats</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="bodywork.html" class="dropdown__link">Bodywork</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="luggage.html" class="dropdown__link">Luggage</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="engine.html" class="dropdown__link">Engine</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="controls.html" class="dropdown__link">Controls</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="electrical.html" class="dropdown__link">Electrical</a>
-                                            </li>
-
-                                            <li>
-                                                <a href="maintenance.html" class="dropdown__link">Maintenance</a>
-                                            </li>
-                                        </ul>
+</ul>
                                     </div>
     
                                     <!-- <div class="dropdown__group">
@@ -577,6 +546,7 @@
     </body>
 
 </html>
+
 
 
 
