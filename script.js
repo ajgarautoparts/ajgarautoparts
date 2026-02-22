@@ -1,30 +1,22 @@
-/* ================= MENU TOGGLE ================= */
-const showMenu = (toggleId, navId) =>{
-  const toggle = document.getElementById(toggleId),
-        nav = document.getElementById(navId);
+/*=============== SHOW MENU ===============*/
+const navToggle = document.getElementById("nav-toggle");
+const navMenu = document.getElementById("nav-menu");
 
-  if(toggle && nav){
-    toggle.addEventListener('click', () =>{
-      nav.classList.toggle('show-menu');
-      toggle.classList.toggle('show-icon');
-    });
-  }
-};
-showMenu('nav-toggle','nav-menu');
+if (navToggle && navMenu) {
+  navToggle.addEventListener("click", () => {
+    navMenu.classList.toggle("show-menu");
+    navToggle.classList.toggle("show-icon");
+  });
+}
 
-/* ================= DROPDOWN ================= */
-const dropdownItems = document.querySelectorAll('.dropdown__item');
+/*=============== DROPDOWN MENU ===============*/
+const dropdownItems = document.querySelectorAll(".dropdown__item");
 
-dropdownItems.forEach((item) =>{
-  const dropdownButton = item.querySelector('.dropdown__button');
+dropdownItems.forEach(item => {
+  const button = item.querySelector(".dropdown__button");
 
-  dropdownButton.addEventListener('click', () =>{
-    const showDropdown = document.querySelector('.show-dropdown');
-    toggleItem(item);
-
-    if(showDropdown && showDropdown !== item){
-      toggleItem(showDropdown);
-    }
+  button.addEventListener("click", () => {
+    item.classList.toggle("show-dropdown");
   });
 });
 
@@ -84,3 +76,4 @@ logoutBtn.addEventListener("click", () => {
     window.location.href = "index.html";
   });
 });
+
