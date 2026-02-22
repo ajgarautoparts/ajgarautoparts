@@ -217,4 +217,48 @@ const initSlider = () => {
     });
 }
 window.addEventListener("resize", initSlider);
+
 window.addEventListener("load", initSlider);
+
+<script>
+/* ========= CART SYSTEM ========= */
+
+// current user email (login হলে set হবে)
+let currentUser = localStorage.getItem("loggedUser");
+
+// cart key user wise
+function getCartKey(){
+  return currentUser ? "cart_" + currentUser : "cart_guest";
+}
+
+// get cart
+function getCart(){
+  return JSON.parse(localStorage.getItem(getCartKey())) || [];
+}
+
+// save cart
+function saveCart(cart){
+  localStorage.setItem(getCartKey(), JSON.stringify(cart));
+}
+
+// add to cart
+function addToCart(name, price, image){
+  if(!currentUser){
+    alert("Please login to add product to cart");
+    window.location.href = "login.html";
+    return;
+  }
+
+  let cart = getCart();
+
+  let existing = cart.find(p => p.name === name);
+  if(existing){
+    existing.qty += 1;
+  }else{
+    cart.push({name, price, image, qty:1});
+  }
+
+  saveCart(cart);
+  alert("Product added to cart");
+}
+</script>
