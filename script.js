@@ -9,7 +9,7 @@ if (navToggle && navMenu) {
   });
 }
 
-/* ================= FIREBASE AUTH ================= */
+/* ================= FIREBASE ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getAuth,
@@ -29,67 +29,51 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-const userStatus = document.getElementById("user-status");
-const loginLink = document.getElementById("loginLink");
-const logoutBtn = document.getElementById("logoutBtn");
-
 /* ================= LOGIN STATE ================= */
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    userStatus.textContent = user.email;
-    loginLink.style.display = "none";
-    logoutBtn.style.display = "inline-block";
     localStorage.setItem("loggedUser", user.email);
   } else {
-    userStatus.textContent = "";
-    loginLink.style.display = "inline-block";
-    logoutBtn.style.display = "none";
     localStorage.removeItem("loggedUser");
   }
 });
 
-/* ================= LOGOUT ================= */
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    signOut(auth).then(() => location.reload());
-  });
-}
-
-/* ================= CART SYSTEM ================= */
-
-function getCartKey() {
-  const user = localStorage.getItem("loggedUser");
-  return user ? "cart_" + user : "cart_guest";
+/* ================= CART ================= */
+function cartKey() {
+  const u = localStorage.getItem("loggedUser");
+  return u ? "cart_" + u : "cart_guest";
 }
 
 function getCart() {
-  return JSON.parse(localStorage.getItem(getCartKey())) || [];
+  return JSON.parse(localStorage.getItem(cartKey())) || [];
 }
 
-function saveCart(cart) {
-  localStorage.setItem(getCartKey(), JSON.stringify(cart));
+function saveCart(c) {
+  localStorage.setItem(cartKey(), JSON.stringify(c));
 }
 
 function updateCartCount() {
-  const cartCount = document.getElementById("cart-count");
-  if (!cartCount) return;
-
+  const el = document.getElementById("cart-count");
+  if (!el) return;
   const cart = getCart();
-  cartCount.textContent = cart.reduce((t, p) => t + p.qty, 0);
+  el.innerText = cart.reduce((t, i) => t + i.qty, 0);
 }
 
-/* ================= ADD TO CART (AUTO) ================= */
+/* ================= ADD TO CART + BUY NOW ================= */
 document.addEventListener("click", (e) => {
+
+  const card = e.target.closest(".product-card");
+  if (!card) return;
+
+  const name = card.dataset.name;
+  const price = Number(card.dataset.price);
+  const image = card.dataset.image;
+
+  // ADD TO CART
   if (e.target.classList.contains("add-to-cart-btn")) {
 
-    const card = e.target.closest(".product-card");
-    const name = card.dataset.name;
-    const price = Number(card.dataset.price);
-    const image = card.dataset.image;
-
-    const user = localStorage.getItem("loggedUser");
-    if (!user) {
-      alert("Please login to add product");
+    if (!localStorage.getItem("loggedUser")) {
+      alert("please login first");
       location.href = "login.html";
       return;
     }
@@ -97,16 +81,21 @@ document.addEventListener("click", (e) => {
     let cart = getCart();
     let item = cart.find(p => p.name === name);
 
-    if (item) {
-      item.qty += 1;
-    } else {
-      cart.push({ name, price, image, qty: 1 });
-    }
+    if (item) item.qty++;
+    else cart.push({ name, price, image, qty: 1 });
 
     saveCart(cart);
     updateCartCount();
-    alert("Added to cart");
+    alert("added to cart");
   }
+
+  // BUY NOW
+  if (e.target.classList.contains("buy-now-btn")) {
+
+    saveCart([{ name, price, image, qty: 1 }]);
+    location.href = "cart.html";
+  }
+
 });
 
 updateCartCount();
