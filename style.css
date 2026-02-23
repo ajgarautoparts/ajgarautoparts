@@ -2369,3 +2369,17 @@ footer p{
   background:#d60000;
 }
 
+.add-to-cart-btn{
+  width:100%;
+  padding:10px;
+  background:#0f172a;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.add-to-cart-btn:hover{
+  background:#1e293b;
+}
