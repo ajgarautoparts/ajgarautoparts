@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>checkout</title>
+
   <style>
     body{
       font-family: arial;
@@ -29,6 +30,7 @@
       border-radius:8px;
       font-size:16px;
       cursor:pointer;
+      margin-top:10px;
     }
     .save{
       background:#ff4f6d;
@@ -37,11 +39,10 @@
     .cod{
       background:#333;
       color:#fff;
-      margin-top:10px;
     }
-    .location{
-      background:#eee;
-      margin-bottom:10px;
+    .online{
+      background:#2f80ed;
+      color:#fff;
     }
   </style>
 </head>
@@ -53,27 +54,27 @@
 <div class="box">
   <h3>contact details</h3>
   <input id="name" placeholder="name*">
-  <input id="phone" placeholder="mobile no*">
+  <input id="phone" placeholder="mobile number*">
 </div>
 
 <div class="box">
   <h3>address</h3>
-
-  <!-- location button added here -->
-  <button class="location" onclick="getLocation()">
-    use my current location
-  </button>
-
   <input id="pincode" placeholder="pin code*">
-  <input id="house" placeholder="house number / block*">
-  <input id="street" placeholder="address (street, locality)*">
-  <input id="town" placeholder="locality / town*">
-  <input id="city" placeholder="city / district*">
+  <input id="house" placeholder="house / block*">
+  <input id="street" placeholder="street / locality*">
+  <input id="town" placeholder="town*">
+  <input id="city" placeholder="city*">
   <input id="state" placeholder="state*">
 </div>
 
-<button class="save" onclick="saveAddress()">save & continue</button>
+<button class="save" onclick="saveAddress()">save address</button>
+
 <button class="cod" onclick="placeCod()">cash on delivery</button>
+
+<button class="online" onclick="payOnline()">pay online (razorpay)</button>
+
+<!-- razorpay -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <!-- firebase -->
 <script type="module">
@@ -106,7 +107,10 @@ window.saveAddress = ()=>{
 
 window.placeCod = async()=>{
   const a = JSON.parse(localStorage.getItem("address"));
-  if(!a){ alert("please save address first"); return; }
+  if(!a){
+    alert("please save address first");
+    return;
+  }
 
   await addDoc(collection(db,"orders"),{
     ...a,
@@ -115,37 +119,43 @@ window.placeCod = async()=>{
     time:new Date()
   });
 
-  alert("order placed successfully");
+  alert("order placed (cod)");
   localStorage.removeItem("address");
   location.href="index.html";
 };
-</script>
 
-<!-- location script -->
-<script>
-function getLocation(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(showPosition, errorLocation);
-  }else{
-    alert("location not supported");
+window.payOnline = ()=>{
+  const a = JSON.parse(localStorage.getItem("address"));
+  if(!a){
+    alert("please save address first");
+    return;
   }
-}
 
-function showPosition(position){
-  const lat = position.coords.latitude;
-  const lon = position.coords.longitude;
+  const options = {
+    key: "rzp_test_SJYEnKpL9b7Y7Y",
+    amount: 1000 * 100,
+    currency: "INr",
+    name: "ajgar auto parts",
+    description: "online order payment",
+    handler: async function (response){
 
-  street.value = "lat: " + lat + ", lon: " + lon;
+      await addDoc(collection(db,"orders"),{
+        ...a,
+        payment:"razorpay",
+        paymentId: response.razorpay_payment_id,
+        status:"paid",
+        time:new Date()
+      });
 
-  window.open(
-    "https://www.google.com/maps?q=" + lat + "," + lon,
-    "_blank"
-  );
-}
+      alert("payment successful");
+      localStorage.removeItem("address");
+      location.href="index.html";
+    }
+  };
 
-function errorLocation(){
-  alert("location permission denied");
-}
+  const rzp = new Razorpay(options);
+  rzp.open();
+};
 </script>
 
 </body>
