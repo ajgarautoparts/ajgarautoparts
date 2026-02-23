@@ -109,6 +109,30 @@ window.placeCod = async()=>{
   localStorage.removeItem("address");
   location.href="index.html";
 };
+<script>
+function getLocation(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(showPosition, errorLocation);
+  }else{
+    alert("location not supported");
+  }
+}
+
+function showPosition(position){
+  const lat = position.coords.latitude;
+  const lon = position.coords.longitude;
+
+  street.value = "latitude: " + lat + ", longitude: " + lon;
+
+  window.open(
+    "https://www.google.com/maps?q=" + lat + "," + lon,
+    "_blank"
+  );
+}
+
+function errorLocation(){
+  alert("location permission denied");
+}
 </script>
 
 </body>
