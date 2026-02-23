@@ -156,6 +156,28 @@ window.payOnline = ()=>{
   const rzp = new Razorpay(options);
   rzp.open();
 };
+<script>
+function sendWhatsappAlert(order){
+  const msg =
+    "new order received%0a%0a" +
+    "name: " + order.name + "%0a" +
+    "phone: " + order.phone + "%0a" +
+    "address: " +
+      order.house + ", " +
+      order.street + ", " +
+      order.town + ", " +
+      order.city + ", " +
+      order.state + " - " +
+      order.pincode + "%0a" +
+    "payment: " + order.payment + "%0a" +
+    "status: " + order.status + "%0a%0a" +
+    "ajgar auto parts";
+
+  window.open(
+    "https://wa.me/917407117955?text=" + msg,
+    "_blank"
+  );
+}
 </script>
 
 </body>
