@@ -1,55 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Your Cart</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body{font-family:Arial;padding:20px}
-    .item{display:flex;gap:10px;margin-bottom:15px}
-    img{width:80px}
-    button{padding:5px 10px}
-  </style>
+  <title>CART | AJGAR AUTO PARTS</title>
 </head>
 <body>
 
-<h2>Your Cart</h2>
-<div id="cartItems"></div>
-<h3>Total: ₹<span id="total">0</span></h3>
+<h2>YOUR CART</h2>
+
+<div id="cart-items"></div>
+
+<h3 id="total"></h3>
 
 <a href="checkout.html">
-  <button>Proceed to Checkout</button>
+  <button>PROCEED TO CHECKOUT</button>
 </a>
 
-<script>
-  const user = localStorage.getItem("loggedUser");
-  const key = user ? "cart_" + user : "cart_guest";
-  const cart = JSON.parse(localStorage.getItem(key)) || [];
+<script type="module">
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+  authDomain: "ajgar-auto-parts.firebaseapp.com",
+  projectId: "ajgar-auto-parts"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const cartBox = document.getElementById("cart-items");
+const totalBox = document.getElementById("total");
+
+onAuthStateChanged(auth, user => {
+  if(!user){
+    location.href="login.html";
+    return;
+  }
+
+  const cart = JSON.parse(localStorage.getItem("cart_"+user.email)) || [];
   let total = 0;
-  const container = document.getElementById("cartItems");
 
-  cart.forEach((item, i) => {
-    total += item.price * item.qty;
-
-    container.innerHTML += `
-      <div class="item">
-        <img src="${item.image}">
-        <div>
-          <b>${item.name}</b><br>
-          ₹${item.price} x ${item.qty}<br>
-          <button onclick="removeItem(${i})">Remove</button>
-        </div>
-      </div>
+  cart.forEach(p=>{
+    total += p.price * p.qty;
+    cartBox.innerHTML += `
+      <p>${p.name} × ${p.qty} = ₹${p.price*p.qty}</p>
     `;
   });
 
-  document.getElementById("total").innerText = total;
-
-  function removeItem(i){
-    cart.splice(i,1);
-    localStorage.setItem(key, JSON.stringify(cart));
-    location.reload();
-  }
+  totalBox.innerText = "TOTAL: ₹"+total;
+});
 </script>
 
 </body>
