@@ -35,4 +35,17 @@ snap.forEach(d=>{
     </div>
   `;
 });
+<script>
+function sendStatus(phone, status){
+  const msg =
+    "YOUR ORDER STATUS UPDATE%0A" +
+    "STATUS: " + status + "%0A" +
+    "AJGAR AUTO PARTS";
+
+  window.open(
+    "https://wa.me/" + phone + "?text=" + msg,
+    "_blank"
+  );
+}
 </script>
+
