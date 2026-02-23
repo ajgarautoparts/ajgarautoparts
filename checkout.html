@@ -7,14 +7,18 @@
 
 <h2>CHECKOUT</h2>
 
-<input id="address" placeholder="ENTER DELIVERY ADDRESS"><br><br>
+<input id="name" placeholder="NAME"><br><br>
+<input id="phone" placeholder="PHONE"><br><br>
+<input id="address" placeholder="ADDRESS"><br><br>
 
-<button onclick="placeOrder()">PLACE ORDER (COD)</button>
+<button onclick="cod()">CASH ON DELIVERY</button>
+<br><br>
+<button onclick="payOnline()">PAY ONLINE</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, addDoc, collection } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -24,31 +28,59 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
-let currentUser;
-
-onAuthStateChanged(auth,user=>{
-  if(!user) location.href="login.html";
-  currentUser = user;
-});
-
-window.placeOrder = async () => {
-  const address = document.getElementById("address").value;
-  const cart = JSON.parse(localStorage.getItem("cart_"+currentUser.email)) || [];
-
+window.cod = async()=>{
   await addDoc(collection(db,"orders"),{
-    user: currentUser.email,
-    cart,
-    address,
-    payment:"COD",
-    date: new Date()
+    name:name.value,
+    phone:phone.value,
+    address:address.value,
+    payment:"cod",
+    status:"pending",
+    time:new Date()
   });
-
-  localStorage.removeItem("cart_"+currentUser.email);
-  alert("ORDER PLACED");
+  alert("order placed cod");
   location.href="index.html";
 };
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+function payOnline(){
+  const options = {
+    key: "RAZORPAY_KEY_ID_HERE",
+    amount: 1000 * 100,
+    currency: "INR",
+    name: "AJGAR AUTO PARTS",
+    description: "ORDER PAYMENT",
+    handler: function (response){
+      saveOnlineOrder(response.razorpay_payment_id);
+    }
+  };
+  new Razorpay(options).open();
+}
+
+async function saveOnlineOrder(pid){
+  const { addDoc, collection } = await import(
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+  );
+  const { getFirestore } = await import(
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+  );
+  const db = getFirestore();
+
+  await addDoc(collection(db,"orders"),{
+    name:name.value,
+    phone:phone.value,
+    address:address.value,
+    payment:"razorpay",
+    paymentId:pid,
+    status:"paid",
+    time:new Date()
+  });
+  alert("payment success");
+  location.href="index.html";
+}
 </script>
 
 </body>
