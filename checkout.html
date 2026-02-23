@@ -1,1 +1,55 @@
-<a href="checkout.html">PROCEED TO CHECKOUT</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CHECKOUT</title>
+</head>
+<body>
+
+<h2>CHECKOUT</h2>
+
+<input id="address" placeholder="ENTER DELIVERY ADDRESS"><br><br>
+
+<button onclick="placeOrder()">PLACE ORDER (COD)</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
+  authDomain: "ajgar-auto-parts.firebaseapp.com",
+  projectId: "ajgar-auto-parts"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+let currentUser;
+
+onAuthStateChanged(auth,user=>{
+  if(!user) location.href="login.html";
+  currentUser = user;
+});
+
+window.placeOrder = async () => {
+  const address = document.getElementById("address").value;
+  const cart = JSON.parse(localStorage.getItem("cart_"+currentUser.email)) || [];
+
+  await addDoc(collection(db,"orders"),{
+    user: currentUser.email,
+    cart,
+    address,
+    payment:"COD",
+    date: new Date()
+  });
+
+  localStorage.removeItem("cart_"+currentUser.email);
+  alert("ORDER PLACED");
+  location.href="index.html";
+};
+</script>
+
+</body>
+</html>
