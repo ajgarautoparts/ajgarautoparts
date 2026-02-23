@@ -9,6 +9,7 @@
       background:#f6f6f6;
       padding:20px;
     }
+    h2{margin-bottom:10px}
     .box{
       background:#fff;
       padding:15px;
@@ -30,20 +31,10 @@
       border-radius:8px;
       font-size:16px;
       cursor:pointer;
-      margin-top:10px;
     }
-    .save{
-      background:#ff4f6d;
-      color:#fff;
-    }
-    .cod{
-      background:#333;
-      color:#fff;
-    }
-    .online{
-      background:#2f80ed;
-      color:#fff;
-    }
+    .save{background:#ff4f6d;color:#fff}
+    .cod{background:#333;color:#fff;margin-top:10px}
+    .pay{background:#0a7cff;color:#fff;margin-top:10px}
   </style>
 </head>
 
@@ -53,33 +44,28 @@
 
 <div class="box">
   <h3>contact details</h3>
-  <input id="name" placeholder="name*">
-  <input id="phone" placeholder="mobile number*">
+  <input id="name" placeholder="name">
+  <input id="phone" placeholder="mobile number">
 </div>
 
 <div class="box">
   <h3>address</h3>
-  <input id="pincode" placeholder="pin code*">
-  <input id="house" placeholder="house / block*">
-  <input id="street" placeholder="street / locality*">
-  <input id="town" placeholder="town*">
-  <input id="city" placeholder="city*">
-  <input id="state" placeholder="state*">
+  <input id="pincode" placeholder="pincode">
+  <input id="house" placeholder="house / flat / block">
+  <input id="street" placeholder="street / locality">
+  <input id="town" placeholder="town">
+  <input id="city" placeholder="city">
+  <input id="state" placeholder="state">
 </div>
 
-<button class="save" onclick="saveAddress()">save address</button>
-
-<button class="cod" onclick="placeCod()">cash on delivery</button>
-
-<button class="online" onclick="payOnline()">pay online (razorpay)</button>
-
-<!-- razorpay -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<button class="save" onclick="saveaddress()">save address</button>
+<button class="cod" onclick="placecod()">cash on delivery</button>
+<button class="pay" onclick="payonline()">pay online</button>
 
 <!-- firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, addDoc, collection } 
+import { getFirestore, addDoc, collection }
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -91,7 +77,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.saveAddress = ()=>{
+window.saveaddress = ()=>{
   localStorage.setItem("address", JSON.stringify({
     name:name.value,
     phone:phone.value,
@@ -105,47 +91,48 @@ window.saveAddress = ()=>{
   alert("address saved");
 };
 
-window.placeCod = async()=>{
+window.placecod = async()=>{
   const a = JSON.parse(localStorage.getItem("address"));
-  if(!a){
-    alert("please save address first");
-    return;
-  }
+  if(!a){ alert("save address first"); return; }
 
-  await addDoc(collection(db,"orders"),{
+  const order = {
     ...a,
     payment:"cod",
     status:"pending",
     time:new Date()
-  });
+  };
 
-  alert("order placed (cod)");
+  await addDoc(collection(db,"orders"), order);
+
+  whatsappalert(order);
+
+  alert("order placed cod");
   localStorage.removeItem("address");
   location.href="index.html";
 };
 
-window.payOnline = ()=>{
+window.payonline = ()=>{
   const a = JSON.parse(localStorage.getItem("address"));
-  if(!a){
-    alert("please save address first");
-    return;
-  }
+  if(!a){ alert("save address first"); return; }
 
   const options = {
     key: "rzp_test_SJYEnKpL9b7Y7Y",
     amount: 1000 * 100,
-    currency: "INr",
+    currency: "inr",
     name: "ajgar auto parts",
-    description: "online order payment",
+    description: "order payment",
     handler: async function (response){
 
-      await addDoc(collection(db,"orders"),{
+      const order = {
         ...a,
         payment:"razorpay",
-        paymentId: response.razorpay_payment_id,
+        paymentid:response.razorpay_payment_id,
         status:"paid",
         time:new Date()
-      });
+      };
+
+      await addDoc(collection(db,"orders"), order);
+      whatsappalert(order);
 
       alert("payment successful");
       localStorage.removeItem("address");
@@ -153,32 +140,27 @@ window.payOnline = ()=>{
     }
   };
 
-  const rzp = new Razorpay(options);
-  rzp.open();
+  new Razorpay(options).open();
 };
-<script>
-function sendWhatsappAlert(order){
+
+function whatsappalert(order){
   const msg =
-    "new order received%0a%0a" +
-    "name: " + order.name + "%0a" +
-    "phone: " + order.phone + "%0a" +
-    "address: " +
-      order.house + ", " +
-      order.street + ", " +
-      order.town + ", " +
-      order.city + ", " +
-      order.state + " - " +
-      order.pincode + "%0a" +
-    "payment: " + order.payment + "%0a" +
-    "status: " + order.status + "%0a%0a" +
+    "new order received%0a%0a"+
+    "name: "+order.name+"%0a"+
+    "phone: "+order.phone+"%0a"+
+    "address: "+order.house+", "+order.street+", "+order.city+", "+order.state+" - "+order.pincode+"%0a"+
+    "payment: "+order.payment+"%0a"+
+    "status: "+order.status+"%0a%0a"+
     "ajgar auto parts";
 
   window.open(
-    "https://wa.me/917407117955?text=" + msg,
+    "https://wa.me/917407117955?text="+msg,
     "_blank"
   );
 }
 </script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 </body>
 </html>
