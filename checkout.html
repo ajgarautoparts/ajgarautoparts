@@ -39,6 +39,10 @@
       color:#fff;
       margin-top:10px;
     }
+    .location{
+      background:#eee;
+      margin-bottom:10px;
+    }
   </style>
 </head>
 
@@ -54,6 +58,12 @@
 
 <div class="box">
   <h3>address</h3>
+
+  <!-- location button added here -->
+  <button class="location" onclick="getLocation()">
+    use my current location
+  </button>
+
   <input id="pincode" placeholder="pin code*">
   <input id="house" placeholder="house number / block*">
   <input id="street" placeholder="address (street, locality)*">
@@ -109,6 +119,9 @@ window.placeCod = async()=>{
   localStorage.removeItem("address");
   location.href="index.html";
 };
+</script>
+
+<!-- location script -->
 <script>
 function getLocation(){
   if(navigator.geolocation){
@@ -122,7 +135,7 @@ function showPosition(position){
   const lat = position.coords.latitude;
   const lon = position.coords.longitude;
 
-  street.value = "latitude: " + lat + ", longitude: " + lon;
+  street.value = "lat: " + lat + ", lon: " + lon;
 
   window.open(
     "https://www.google.com/maps?q=" + lat + "," + lon,
@@ -137,4 +150,3 @@ function errorLocation(){
 
 </body>
 </html>
-
