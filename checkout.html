@@ -1,55 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>CHECKOUT | AJGAR AUTO PARTS</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>checkout</title>
   <style>
     body{
-      font-family:Arial, sans-serif;
+      font-family: arial;
+      background:#f6f6f6;
       padding:20px;
+    }
+    .box{
+      background:#fff;
+      padding:15px;
+      border-radius:10px;
+      margin-bottom:15px;
     }
     input{
       width:100%;
       padding:10px;
-      margin-bottom:10px;
+      margin-top:8px;
+      margin-bottom:12px;
+      border:1px solid #ccc;
+      border-radius:6px;
     }
     button{
-      width:100%;
       padding:12px;
-      margin-top:10px;
+      width:100%;
       border:none;
-      border-radius:6px;
+      border-radius:8px;
       font-size:16px;
       cursor:pointer;
     }
-    .cod{
-      background:#16a34a;
+    .save{
+      background:#ff4f6d;
       color:#fff;
     }
-    .rzp{
-      background:#0f172a;
+    .cod{
+      background:#333;
       color:#fff;
+      margin-top:10px;
     }
   </style>
 </head>
 
 <body>
 
-<h2>CHECKOUT</h2>
+<h2>add new address</h2>
 
-<input id="name" placeholder="NAME">
-<input id="phone" placeholder="PHONE">
-<input id="address" placeholder="ADDRESS">
+<div class="box">
+  <h3>contact details</h3>
+  <input id="name" placeholder="name*">
+  <input id="phone" placeholder="mobile no*">
+</div>
 
-<h3>TOTAL: ₹<span id="total">0</span></h3>
+<div class="box">
+  <h3>address</h3>
+  <input id="pincode" placeholder="pin code*">
+  <input id="house" placeholder="house number / block*">
+  <input id="street" placeholder="address (street, locality)*">
+  <input id="town" placeholder="locality / town*">
+  <input id="city" placeholder="city / district*">
+  <input id="state" placeholder="state*">
+</div>
 
-<button class="cod" onclick="placeCOD()">CASH ON DELIVERY</button>
-<button class="rzp" onclick="payOnline()">PAY ONLINE (RAZORPAY)</button>
+<button class="save" onclick="saveAddress()">save & continue</button>
+<button class="cod" onclick="placeCod()">cash on delivery</button>
 
-<!-- ================= FIREBASE ================= -->
+<!-- firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, addDoc, collection } 
@@ -64,92 +80,37 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* ===== LOAD CART TOTAL ===== */
-const user = localStorage.getItem("loggedUser");
-const cartKey = user ? "cart_" + user : "cart_guest";
-const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-
-let total = 0;
-cart.forEach(p => total += p.price * p.qty);
-document.getElementById("total").innerText = total;
-
-/* ===== COD ORDER ===== */
-window.placeCOD = async () => {
-  if(!name.value || !phone.value || !address.value){
-    alert("FILL ALL DETAILS");
-    return;
-  }
-
-  await addDoc(collection(db,"orders"),{
-    name: name.value,
-    phone: phone.value,
-    address: address.value,
-    items: cart,
-    total: total,
-    payment: "COD",
-    status: "pending",
-    time: new Date()
-  });
-
-  localStorage.removeItem(cartKey);
-  alert("ORDER PLACED (COD)");
-  location.href = "index.html";
+window.saveAddress = ()=>{
+  localStorage.setItem("address", JSON.stringify({
+    name:name.value,
+    phone:phone.value,
+    pincode:pincode.value,
+    house:house.value,
+    street:street.value,
+    town:town.value,
+    city:city.value,
+    state:state.value
+  }));
+  alert("address saved");
 };
-</script>
 
-<!-- ================= RAZORPAY ================= -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-<script>
-function payOnline(){
-  if(!name.value || !phone.value || !address.value){
-    alert("FILL ALL DETAILS");
-    return;
-  }
-
-  const options = {
-    key: "rzp_test_SJYEnKpL9b7Y7Y",   // <-- ETA TOMAR KEY
-    amount: total * 100,
-    currency: "INR",
-    name: "AJGAR AUTO PARTS",
-    description: "ORDER PAYMENT",
-    handler: function (response){
-      saveOnlineOrder(response.razorpay_payment_id);
-    }
-  };
-
-  new Razorpay(options).open();
-}
-
-async function saveOnlineOrder(paymentId){
-  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
-  const { getFirestore, addDoc, collection } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
-
-  const app = initializeApp({
-    apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
-    authDomain: "ajgar-auto-parts.firebaseapp.com",
-    projectId: "ajgar-auto-parts"
-  });
-
-  const db = getFirestore(app);
+window.placeCod = async()=>{
+  const a = JSON.parse(localStorage.getItem("address"));
+  if(!a){ alert("please save address first"); return; }
 
   await addDoc(collection(db,"orders"),{
-    name: name.value,
-    phone: phone.value,
-    address: address.value,
-    items: cart,
-    total: total,
-    payment: "RAZORPAY",
-    paymentId: paymentId,
-    status: "paid",
-    time: new Date()
+    ...a,
+    payment:"cod",
+    status:"pending",
+    time:new Date()
   });
 
-  localStorage.removeItem(cartKey);
-  alert("PAYMENT SUCCESS");
-  location.href = "index.html";
-}
+  alert("order placed successfully");
+  localStorage.removeItem("address");
+  location.href="index.html";
+};
 </script>
 
 </body>
 </html>
+
