@@ -1,20 +1,23 @@
 /* ================= MENU ================= */
-const navToggle = document.getElementById("nav-toggle");
-const navMenu = document.getElementById("nav-menu");
+document.addEventListener("DOMContentLoaded", () => {
 
-if (navToggle && navMenu) {
-  navToggle.addEventListener("click", () => {
-    navMenu.classList.toggle("show-menu");
-    navToggle.classList.toggle("show-icon");
-  });
-}
+  const navToggle = document.getElementById("nav-toggle");
+  const navMenu = document.getElementById("nav-menu");
 
-/* ================= FIREBASE ================= */
+  if (navToggle && navMenu) {
+    navToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("show-menu");
+      navToggle.classList.toggle("show-icon");
+    });
+  }
+
+});
+
+/* ================= FIREBASE AUTH ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getAuth,
-  onAuthStateChanged,
-  signOut
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -36,9 +39,10 @@ onAuthStateChanged(auth, (user) => {
   } else {
     localStorage.removeItem("loggedUser");
   }
+  updateCartCount();
 });
 
-/* ================= CART ================= */
+/* ================= CART HELPERS ================= */
 function cartKey() {
   const u = localStorage.getItem("loggedUser");
   return u ? "cart_" + u : "cart_guest";
@@ -48,8 +52,8 @@ function getCart() {
   return JSON.parse(localStorage.getItem(cartKey())) || [];
 }
 
-function saveCart(c) {
-  localStorage.setItem(cartKey(), JSON.stringify(c));
+function saveCart(cart) {
+  localStorage.setItem(cartKey(), JSON.stringify(cart));
 }
 
 function updateCartCount() {
@@ -62,15 +66,11 @@ function updateCartCount() {
 /* ================= ADD TO CART + BUY NOW ================= */
 document.addEventListener("click", (e) => {
 
-  const card = e.target.closest(".product-card");
-  if (!card) return;
-
-  const name = card.dataset.name;
-  const price = Number(card.dataset.price);
-  const image = card.dataset.image;
-
   // ADD TO CART
   if (e.target.classList.contains("add-to-cart-btn")) {
+
+    const card = e.target.closest(".product-card");
+    if (!card) return;
 
     if (!localStorage.getItem("loggedUser")) {
       alert("please login first");
@@ -78,11 +78,18 @@ document.addEventListener("click", (e) => {
       return;
     }
 
-    let cart = getCart();
-    let item = cart.find(p => p.name === name);
+    const name = card.dataset.name;
+    const price = Number(card.dataset.price);
+    const image = card.dataset.image;
 
-    if (item) item.qty++;
-    else cart.push({ name, price, image, qty: 1 });
+    let cart = getCart();
+    const item = cart.find(p => p.name === name);
+
+    if (item) {
+      item.qty += 1;
+    } else {
+      cart.push({ name, price, image, qty: 1 });
+    }
 
     saveCart(cart);
     updateCartCount();
@@ -92,10 +99,15 @@ document.addEventListener("click", (e) => {
   // BUY NOW
   if (e.target.classList.contains("buy-now-btn")) {
 
+    const card = e.target.closest(".product-card");
+    if (!card) return;
+
+    const name = card.dataset.name;
+    const price = Number(card.dataset.price);
+    const image = card.dataset.image;
+
     saveCart([{ name, price, image, qty: 1 }]);
-    location.href = "cart.html";
+    location.href = "checkout.html";
   }
 
 });
-
-updateCartCount();
