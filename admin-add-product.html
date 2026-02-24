@@ -44,10 +44,11 @@ button{
 
 <div class="box">
   <input id="name" placeholder="PRODUCT NAME">
+
   <input id="price" placeholder="PRICE">
 
-  <!-- IMAGE UPLOAD -->
-  <input type="file" id="imageFile" accept="image/*">
+  <!-- IMAGE URL SYSTEM -->
+  <input id="image" placeholder="IMAGE URL (IMG-BB / GOOGLE LINK)">
 
   <select id="category">
     <option value="">SELECT CATEGORY</option>
@@ -65,56 +66,41 @@ button{
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
 import {
   getFirestore,
   addDoc,
   collection,
   serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
   authDomain: "ajgar-auto-parts.firebaseapp.com",
-  projectId: "ajgar-auto-parts",
-  storageBucket: "ajgar-auto-parts.appspot.com"
+  projectId: "ajgar-auto-parts"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
-window.addProduct = async () => {
-
-  const file = document.getElementById("imageFile").files[0];
-
-  if(!name.value || !price.value || !file || !category.value){
+window.addProduct = async()=>{
+  if(
+    !name.value ||
+    !price.value ||
+    !image.value ||
+    !category.value
+  ){
     alert("ALL FIELDS REQUIRED");
     return;
   }
 
-  /* UPLOAD IMAGE */
-  const imgRef = ref(
-    storage,
-    "products/" + Date.now() + "_" + file.name
-  );
-
-  await uploadBytes(imgRef, file);
-  const imageURL = await getDownloadURL(imgRef);
-
-  /* SAVE PRODUCT */
   await addDoc(collection(db,"products"),{
     name: name.value,
     price: Number(price.value),
-    image: imageURL,
+    image: image.value,
     category: category.value,
     description: desc.value,
     created: serverTimestamp()
@@ -124,7 +110,7 @@ window.addProduct = async () => {
 
   name.value="";
   price.value="";
-  imageFile.value="";
+  image.value="";
   category.value="";
   desc.value="";
 };
