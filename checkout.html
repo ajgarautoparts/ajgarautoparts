@@ -1,41 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>checkout</title>
+<meta charset="UTF-8">
+<title>checkout | ajgar auto parts</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body{
-      font-family: arial;
-      background:#f6f6f6;
-      padding:20px;
-    }
-    h2{margin-bottom:10px}
-    .box{
-      background:#fff;
-      padding:15px;
-      border-radius:10px;
-      margin-bottom:15px;
-    }
-    input{
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      margin-bottom:12px;
-      border:1px solid #ccc;
-      border-radius:6px;
-    }
-    button{
-      padding:12px;
-      width:100%;
-      border:none;
-      border-radius:8px;
-      font-size:16px;
-      cursor:pointer;
-    }
-    .save{background:#ff4f6d;color:#fff}
-    .cod{background:#333;color:#fff;margin-top:10px}
-    .pay{background:#0a7cff;color:#fff;margin-top:10px}
-  </style>
+<style>
+body{
+  font-family: arial;
+  background:#f6f7fb;
+  padding:20px;
+}
+h2{margin-bottom:15px}
+.box{
+  background:#fff;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+input{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  margin-bottom:12px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+.save{
+  background:#2563eb;
+  color:#fff;
+}
+.cod{
+  background:#0f172a;
+  color:#fff;
+  margin-top:10px;
+}
+</style>
 </head>
 
 <body>
@@ -49,24 +57,30 @@
 </div>
 
 <div class="box">
-  <h3>address</h3>
-  <input id="pincode" placeholder="pincode">
-  <input id="house" placeholder="house / flat / block">
+  <h3>delivery address</h3>
+  <input id="pincode" placeholder="pin code">
+  <input id="house" placeholder="house / block">
   <input id="street" placeholder="street / locality">
   <input id="town" placeholder="town">
   <input id="city" placeholder="city">
   <input id="state" placeholder="state">
 </div>
 
-<button class="save" onclick="saveaddress()">save address</button>
-<button class="cod" onclick="placecod()">cash on delivery</button>
-<button class="pay" onclick="payonline()">pay online</button>
+<button class="save" onclick="saveAddress()">save address</button>
+<button class="cod" onclick="placeCod()">cash on delivery</button>
 
 <!-- firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, addDoc, collection }
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getFirestore, 
+  addDoc, 
+  collection 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+  getAuth, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -76,91 +90,66 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-window.saveaddress = ()=>{
-  localStorage.setItem("address", JSON.stringify({
-    name:name.value,
-    phone:phone.value,
-    pincode:pincode.value,
-    house:house.value,
-    street:street.value,
-    town:town.value,
-    city:city.value,
-    state:state.value
-  }));
+/* save address */
+window.saveAddress = ()=>{
+  const address = {
+    name: name.value,
+    phone: phone.value,
+    pincode: pincode.value,
+    house: house.value,
+    street: street.value,
+    town: town.value,
+    city: city.value,
+    state: state.value
+  };
+
+  localStorage.setItem("address", JSON.stringify(address));
   alert("address saved");
 };
 
-window.placecod = async()=>{
-  const a = JSON.parse(localStorage.getItem("address"));
-  if(!a){ alert("save address first"); return; }
+/* place cod order */
+window.placeCod = async()=>{
+  const user = auth.currentUser;
+  if(!user){
+    alert("please login first");
+    location.href="login.html";
+    return;
+  }
 
-  const order = {
-    ...a,
-    payment:"cod",
-    status:"pending",
-    time:new Date()
-  };
+  const address = JSON.parse(localStorage.getItem("address"));
+  const cart = JSON.parse(
+    localStorage.getItem("cart_" + user.email)
+  ) || [];
 
-  await addDoc(collection(db,"orders"), order);
+  if(!address || cart.length === 0){
+    alert("address or cart empty");
+    return;
+  }
 
-  whatsappalert(order);
+  const total = cart.reduce(
+    (t,p)=> t + (p.price * p.qty), 0
+  );
 
-  alert("order placed cod");
+  await addDoc(collection(db,"orders"),{
+    email: user.email,
+    products: cart,        // 🔥 full product details
+    total: total,
+    address: address,
+    payment: "cod",
+    status: "pending",
+    time: new Date()
+  });
+
+  localStorage.removeItem("cart_" + user.email);
   localStorage.removeItem("address");
+
+  alert("order placed successfully");
   location.href="index.html";
 };
-
-window.payonline = ()=>{
-  const a = JSON.parse(localStorage.getItem("address"));
-  if(!a){ alert("save address first"); return; }
-
-  const options = {
-    key: "rzp_test_SJYEnKpL9b7Y7Y",
-    amount: 1000 * 100,
-    currency: "inr",
-    name: "ajgar auto parts",
-    description: "order payment",
-    handler: async function (response){
-
-      const order = {
-        ...a,
-        payment:"razorpay",
-        paymentid:response.razorpay_payment_id,
-        status:"paid",
-        time:new Date()
-      };
-
-      await addDoc(collection(db,"orders"), order);
-      whatsappalert(order);
-
-      alert("payment successful");
-      localStorage.removeItem("address");
-      location.href="index.html";
-    }
-  };
-
-  new Razorpay(options).open();
-};
-
-function whatsappalert(order){
-  const msg =
-    "new order received%0a%0a"+
-    "name: "+order.name+"%0a"+
-    "phone: "+order.phone+"%0a"+
-    "address: "+order.house+", "+order.street+", "+order.city+", "+order.state+" - "+order.pincode+"%0a"+
-    "payment: "+order.payment+"%0a"+
-    "status: "+order.status+"%0a%0a"+
-    "ajgar auto parts";
-
-  window.open(
-    "https://wa.me/917407117955?text="+msg,
-    "_blank"
-  );
-}
 </script>
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 </body>
 </html>
+
