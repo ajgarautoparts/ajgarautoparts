@@ -1,35 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>profile</title>
+<meta charset="UTF-8">
+<title>PROFILE</title>
 <style>
 body{font-family:arial;background:#f6f7fb;padding:20px}
-.box{background:#fff;padding:15px;border-radius:8px}
-button{padding:10px 14px;margin-top:10px}
+.box{background:#fff;padding:15px;border-radius:10px}
 </style>
 </head>
 
 <body>
 
-<h2>my profile</h2>
-
+<h2>MY PROFILE</h2>
 <div class="box">
-  <p id="email"></p>
-  <button onclick="logout()">logout</button>
-  <br><br>
-  <a href="my-orders.html">my orders</a>
+  <p><b>EMAIL:</b> <span id="email"></span></p>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
-  authDomain: "ajgar-auto-parts.firebaseapp.com",
-  projectId: "ajgar-auto-parts"
+  authDomain: "ajgar-auto-parts.firebaseapp.com"
 });
 
 const auth = getAuth();
@@ -39,15 +32,9 @@ onAuthStateChanged(auth,user=>{
     location.href="login.html";
     return;
   }
-  document.getElementById("email").innerText =
-    "logged in as: " + user.email;
+  document.getElementById("email").innerText = user.email;
 });
-
-window.logout = ()=>{
-  signOut(auth).then(()=>location.href="index.html");
-}
 </script>
 
 </body>
 </html>
-
