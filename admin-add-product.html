@@ -144,11 +144,15 @@ window.addProduct = async () => {
 
   const name = document.getElementById("name").value.trim();
   const price = document.getElementById("price").value.trim();
+  const offer = document.getElementById("offer").value.trim();
+  const stock = document.getElementById("stock").value.trim();
   const image = document.getElementById("image").value.trim();
   const category = document.getElementById("category").value;
   const desc = document.getElementById("desc").value.trim();
+  const featured = document.getElementById("featured").value;
+  const status = document.getElementById("status").value;
 
-  if (!name || !price || !image || !category) {
+  if (!name || !price || !image || !category || !stock) {
     alert("PLEASE FILL ALL REQUIRED FIELDS");
     return;
   }
@@ -156,19 +160,19 @@ window.addProduct = async () => {
   await addDoc(collection(db, "products"), {
     name: name,
     price: Number(price),
+    offerPrice: offer ? Number(offer) : null,
+    stock: Number(stock),
     image: image,
     category: category,
     description: desc,
+    featured: featured === "yes",
+    status: status,
     created: serverTimestamp()
   });
 
-  alert("PRODUCT ADDED SUCCESSFULLY");
+  alert("✅ PRODUCT ADDED SUCCESSFULLY");
 
-  document.getElementById("name").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("image").value = "";
-  document.getElementById("category").value = "";
-  document.getElementById("desc").value = "";
+  document.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
 };
 </script>
 
