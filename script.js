@@ -1,6 +1,5 @@
 /* ================= MENU ================= */
 document.addEventListener("DOMContentLoaded", () => {
-
   const navToggle = document.getElementById("nav-toggle");
   const navMenu = document.getElementById("nav-menu");
 
@@ -16,30 +15,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ================= FIREBASE AUTH ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
   authDomain: "ajgar-auto-parts.firebaseapp.com",
-  projectId: "ajgar-auto-parts",
-  storageBucket: "ajgar-auto-parts.appspot.com",
-  messagingSenderId: "504184526438",
-  appId: "1:504184526438:web:fd970aa45dcb29131fffa7"
+  projectId: "ajgar-auto-parts"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+const userStatus = document.getElementById("user-status");
+const loginLink = document.getElementById("loginLink");
+const logoutBtn = document.getElementById("logoutBtn");
+
 /* ================= LOGIN STATE ================= */
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, user => {
   if (user) {
     localStorage.setItem("loggedUser", user.email);
+
+    if (userStatus) userStatus.innerText = user.email;
+    if (loginLink) loginLink.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
   } else {
     localStorage.removeItem("loggedUser");
+
+    if (userStatus) userStatus.innerText = "";
+    if (loginLink) loginLink.style.display = "inline-block";
+    if (logoutBtn) logoutBtn.style.display = "none";
   }
+
   updateCartCount();
 });
+
+/* ================= LOGOUT ================= */
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth).then(() => location.reload());
+  });
+}
 
 /* ================= CART HELPERS ================= */
 function cartKey() {
@@ -63,7 +82,7 @@ function updateCartCount() {
 }
 
 /* ================= ADD TO CART + BUY NOW ================= */
-document.addEventListener("click", (e) => {
+document.addEventListener("click", e => {
 
   const card = e.target.closest(".product-card");
   if (!card) return;
@@ -75,10 +94,16 @@ document.addEventListener("click", (e) => {
   /* add to cart */
   if (e.target.classList.contains("add-to-cart-btn")) {
 
+    if (!localStorage.getItem("loggedUser")) {
+      alert("please login first");
+      location.href = "login.html";
+      return;
+    }
+
     let cart = getCart();
     const item = cart.find(p => p.name === name);
 
-    if (item) item.qty += 1;
+    if (item) item.qty++;
     else cart.push({ name, price, image, qty: 1 });
 
     saveCart(cart);
@@ -93,5 +118,5 @@ document.addEventListener("click", (e) => {
     updateCartCount();
     location.href = "cart.html";
   }
-
 });
+
