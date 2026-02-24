@@ -34,29 +34,39 @@
                 <!--=============== NAV MENU ===============-->
                 <div class="nav__menu" id="nav-menu">
                     <li class="nav__item">
+  <a href="index.html" class="nav__link">
+    <i class="fa-solid fa-house"></i> HOME
+  </a>
+</li>
+
+<li class="nav__item">
   <a href="cart.html" class="nav__link">
     <i class="fa-solid fa-cart-shopping"></i>
-    cart (<span id="cart-count">0</span>)
+    CART (<span id="cart-count">0</span>)
+  </a>
+</li>
+
+<li class="nav__item">
+  <a href="my-orders.html" class="nav__link">
+    <i class="fa-solid fa-box"></i> MY ORDERS
   </a>
 </li>
 
 <li class="nav__item">
   <a href="store-locator.html" class="nav__link">
-    <i class="fa-solid fa-location-dot"></i>
-    store locator
+    <i class="fa-solid fa-location-dot"></i> STORE LOCATOR
   </a>
 </li>
 
-  <!-- AUTH -->
-  <li class="nav__item auth-box">
-  <span id="user-status"></span>
-
-  <a href="login.html" id="loginLink">
-    LOGIN
+<li class="nav__item">
+  <a href="login.html" class="nav__link" id="loginLink">
+    <i class="fa-solid fa-user"></i> LOGIN
   </a>
 
-  <button id="logoutBtn" style="display:none">
-    LOGOUT
+  <span id="user-status" class="nav__link" style="display:none"></span>
+
+  <button id="logoutBtn" class="nav__link" style="display:none">
+    <i class="fa-solid fa-right-from-bracket"></i> LOGOUT
   </button>
 </li>
 
@@ -529,6 +539,7 @@
     </body>
 
 </html>
+
 
 
 
