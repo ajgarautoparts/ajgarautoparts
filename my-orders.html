@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>my orders</title>
+<meta charset="utf-8">
+<title>my orders</title>
+<style>
+body{font-family:arial;background:#f6f7fb;padding:20px}
+.order{background:#fff;padding:12px;margin-bottom:10px;border-radius:6px}
+</style>
 </head>
+
 <body>
 
 <h2>my orders</h2>
-<div id="myOrders"></div>
+<div id="orders"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -14,66 +20,53 @@ import {
   getFirestore,
   collection,
   query,
+  where,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
+const app = initializeApp({
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
   authDomain: "ajgar-auto-parts.firebaseapp.com",
   projectId: "ajgar-auto-parts"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const box = document.getElementById("myOrders");
-
-const q = query(collection(db,"orders"));
-const snap = await getDocs(q);
-
-snap.forEach(d=>{
-  const o = d.data();
-
-  box.innerHTML += `
-    <div style="border:1px solid #000;padding:10px;margin:10px">
-      <p>name: ${o.name}</p>
-      <p>phone: ${o.phone}</p>
-      <p>status: <b>${o.status}</b></p>
-
-      <button onclick="sendStatus('${o.phone}','order received')">
-        order received
-      </button>
-
-      <button onclick="sendStatus('${o.phone}','shipped')">
-        shipped
-      </button>
-
-      <button onclick="sendStatus('${o.phone}','out for delivery')">
-        out for delivery
-      </button>
-
-      <button onclick="sendStatus('${o.phone}','delivered')">
-        delivered
-      </button>
-    </div>
-  `;
 });
-</script>
 
-<script>
-function sendStatus(phone, status){
-  const msg =
-    "your order status update%0a" +
-    "status: " + status + "%0a" +
-    "ajgar auto parts";
+const db = getFirestore();
+const auth = getAuth();
+const box = document.getElementById("orders");
 
-  window.open(
-    "https://wa.me/" + phone + "?text=" + msg,
-    "_blank"
+onAuthStateChanged(auth, async user=>{
+  if(!user){
+    location.href="login.html";
+    return;
+  }
+
+  const q = query(
+    collection(db,"orders"),
+    where("email","==",user.email)
   );
-}
+
+  const snap = await getDocs(q);
+
+  if(snap.empty){
+    box.innerHTML = "<p>no orders yet</p>";
+    return;
+  }
+
+  snap.forEach(d=>{
+    const o = d.data();
+    box.innerHTML += `
+      <div class="order">
+        <p><b>status:</b> ${o.status}</p>
+        <p><b>payment:</b> ${o.payment}</p>
+      </div>
+    `;
+  });
+});
 </script>
 
 </body>
 </html>
-
