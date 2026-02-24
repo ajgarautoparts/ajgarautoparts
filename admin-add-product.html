@@ -176,15 +176,14 @@ window.addProduct = async () => {
 };
 <script>
 function previewImage(){
-  const url = document.getElementById("image").value.trim();
+  const url = document.getElementById("image").value;
   const box = document.getElementById("preview");
 
-  if(!url){
+  if(url && url.startsWith("http")){
+    box.innerHTML = `<img src="${url}" />`;
+  }else{
     box.innerHTML = "image preview";
-    return;
   }
-
-  box.innerHTML = `<img src="${url}" onerror="this.parentNode.innerHTML='invalid image url'">`;
 }
 </script>
 
