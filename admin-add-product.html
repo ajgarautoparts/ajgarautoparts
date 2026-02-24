@@ -123,16 +123,13 @@ button{
 </div>
 
 <script type="module">
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
   addDoc,
   collection,
   serverTimestamp
-} from
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -143,52 +140,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.previewImage = ()=>{
-  const box = document.getElementById("preview");
-  if(!image.value){
-    box.innerHTML = "image preview";
-    return;
-  }
-  box.innerHTML = `<img src="${image.value}">`;
-};
+window.addProduct = async () => {
 
-function generateId(){
-  return "ajg-" + Math.floor(100000 + Math.random()*900000);
-}
+  const name = document.getElementById("name").value.trim();
+  const price = document.getElementById("price").value.trim();
+  const image = document.getElementById("image").value.trim();
+  const category = document.getElementById("category").value;
+  const desc = document.getElementById("desc").value.trim();
 
-window.addProduct = async()=>{
-
-  if(!name.value || !price.value || !image.value || !category.value){
-    alert("all required fields missing");
+  if (!name || !price || !image || !category) {
+    alert("PLEASE FILL ALL REQUIRED FIELDS");
     return;
   }
 
-  await addDoc(collection(db,"products"),{
-    productId: generateId(),
-    name: name.value,
-    price: Number(price.value),
-    offerPrice: offer.value ? Number(offer.value) : null,
-    stock: Number(stock.value || 0),
-    image: image.value,
-    category: category.value,
-    description: desc.value,
-    featured: featured.value,
-    status: status.value,
+  await addDoc(collection(db, "products"), {
+    name: name,
+    price: Number(price),
+    image: image,
+    category: category,
+    description: desc,
     created: serverTimestamp()
   });
 
-  alert("product added successfully");
+  alert("PRODUCT ADDED SUCCESSFULLY");
 
-  name.value="";
-  price.value="";
-  offer.value="";
-  stock.value="";
-  image.value="";
-  category.value="";
-  desc.value="";
-  featured.value="no";
-  status.value="active";
-  preview.innerHTML="image preview";
+  document.getElementById("name").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("image").value = "";
+  document.getElementById("category").value = "";
+  document.getElementById("desc").value = "";
 };
 </script>
 
