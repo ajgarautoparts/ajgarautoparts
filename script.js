@@ -11,14 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  updateCartCount();
 });
 
 /* ================= FIREBASE AUTH ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -66,48 +65,33 @@ function updateCartCount() {
 /* ================= ADD TO CART + BUY NOW ================= */
 document.addEventListener("click", (e) => {
 
-  // ADD TO CART
+  const card = e.target.closest(".product-card");
+  if (!card) return;
+
+  const name = card.dataset.name;
+  const price = Number(card.dataset.price);
+  const image = card.dataset.image;
+
+  /* add to cart */
   if (e.target.classList.contains("add-to-cart-btn")) {
-
-    const card = e.target.closest(".product-card");
-    if (!card) return;
-
-    if (!localStorage.getItem("loggedUser")) {
-      alert("please login first");
-      location.href = "login.html";
-      return;
-    }
-
-    const name = card.dataset.name;
-    const price = Number(card.dataset.price);
-    const image = card.dataset.image;
 
     let cart = getCart();
     const item = cart.find(p => p.name === name);
 
-    if (item) {
-      item.qty += 1;
-    } else {
-      cart.push({ name, price, image, qty: 1 });
-    }
+    if (item) item.qty += 1;
+    else cart.push({ name, price, image, qty: 1 });
 
     saveCart(cart);
     updateCartCount();
     alert("added to cart");
   }
 
-  // BUY NOW
+  /* buy now */
   if (e.target.classList.contains("buy-now-btn")) {
 
-    const card = e.target.closest(".product-card");
-    if (!card) return;
-
-    const name = card.dataset.name;
-    const price = Number(card.dataset.price);
-    const image = card.dataset.image;
-
     saveCart([{ name, price, image, qty: 1 }]);
-    location.href = "checkout.html";
+    updateCartCount();
+    location.href = "cart.html";
   }
 
 });
