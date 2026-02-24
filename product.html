@@ -55,25 +55,46 @@ button{
 
 <body>
 
+<!-- PRODUCT CARD -->
 <div class="card product-card"
-  data-name="Black Rally Hand Guards"
-  data-price="999"
-  data-image="img/handguard.jpg">
+  id="productCard"
+  data-name=""
+  data-price=""
+  data-image="">
 
-  <img src="img/handguard.jpg">
+  <img id="pImg">
 
-  <h2>Black Rally Hand Guards</h2>
-  <div class="price">₹999</div>
+  <h2 id="pName"></h2>
+  <div class="price" id="pPrice"></div>
 
-  <div class="desc">
-    High quality hand guards for protection and style.
-    Compatible with most bikes.
-  </div>
+  <div class="desc" id="pDesc"></div>
 
   <button class="add-to-cart-btn cart">ADD TO CART</button>
   <button class="buy-now-btn buy">BUY NOW</button>
 </div>
 
+<!-- SCRIPT: URL THEKE DATA LOAD -->
+<script>
+const params = new URLSearchParams(window.location.search);
+
+const name  = params.get("name")  || "Black Rally Hand Guards";
+const price = params.get("price") || "999";
+const image = params.get("image") || "img/handguard.jpg";
+const desc  = params.get("desc")  || 
+  "High quality hand guards for protection and style. Compatible with most bikes.";
+
+document.getElementById("pName").innerText  = name;
+document.getElementById("pPrice").innerText = "₹" + price;
+document.getElementById("pDesc").innerText  = desc;
+document.getElementById("pImg").src         = image;
+
+const card = document.getElementById("productCard");
+card.dataset.name  = name;
+card.dataset.price = price;
+card.dataset.image = image;
+</script>
+
+<!-- EXISTING CART / BUY LOGIC -->
 <script type="module" src="script.js"></script>
 
 </body>
