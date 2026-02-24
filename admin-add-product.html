@@ -119,7 +119,7 @@ button{
     </div>
   </div>
 
-  <button onclick="addProduct()">add product</button>
+  <button id="addBtn">add product</button>
 </div>
 
 <script type="module">
@@ -185,7 +185,11 @@ function previewImage(){
     box.innerHTML = "image preview";
   }
 }
-</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  ...
+</script> document.getElementById("addBtn")
+  .addEventListener("click", addProduct);
 
 </body>
 </html>
