@@ -1,22 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ADMIN PANEL</title>
-  <style>
-    body{font-family:arial;padding:20px}
-    .order{border:1px solid #ccc;padding:10px;margin-bottom:10px}
-    select{padding:5px}
-  </style>
+<meta charset="UTF-8">
+<title>ADMIN PANEL | AJGAR AUTO PARTS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:arial;
+  background:#f6f7fb;
+  padding:20px;
+}
+h2{margin-bottom:15px}
+.order{
+  background:#fff;
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:12px;
+}
+.order b{font-size:16px}
+select{
+  padding:6px;
+  margin-top:6px;
+}
+.btn{
+  margin-top:8px;
+  padding:6px 10px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+.invoice{background:#0f172a;color:#fff}
+.whatsapp{background:#25d366;color:#fff}
+</style>
 </head>
+
 <body>
 
-<h2>ALL ORDERS</h2>
+<h2>ALL ORDERS (ADMIN)</h2>
 <div id="orders"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, updateDoc, doc } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  doc
+} from
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -27,34 +62,74 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const ordersDiv = document.getElementById("orders");
+const box = document.getElementById("orders");
 const snap = await getDocs(collection(db,"orders"));
+
+if(snap.empty){
+  box.innerHTML = "<p>NO ORDERS FOUND</p>";
+}
 
 snap.forEach(d=>{
   const o = d.data();
-  ordersDiv.innerHTML += `
+
+  box.innerHTML += `
     <div class="order">
       <b>${o.name}</b><br>
-      ${o.phone}<br>
-      PAYMENT: ${o.payment}<br>
-      STATUS:
-      <select onchange="updateStatus('${d.id}',this.value)">
-        <option ${o.status=="pending"?"selected":""}>pending</option>
-        <option ${o.status=="delivered"?"selected":""}>delivered</option>
-        <option ${o.status=="cancelled"?"selected":""}>cancelled</option>
+      📞 ${o.phone}<br>
+      ✉️ ${o.email || "N/A"}<br>
+      💳 PAYMENT: <b>${o.payment}</b><br>
+      📦 STATUS:
+      <select onchange="updateStatus('${d.id}',this.value,'${o.phone}')">
+        <option value="pending" ${o.status=="pending"?"selected":""}>pending</option>
+        <option value="shipped" ${o.status=="shipped"?"selected":""}>shipped</option>
+        <option value="out for delivery" ${o.status=="out for delivery"?"selected":""}>
+          out for delivery
+        </option>
+        <option value="delivered" ${o.status=="delivered"?"selected":""}>delivered</option>
+        <option value="cancelled" ${o.status=="cancelled"?"selected":""}>cancelled</option>
       </select>
       <br>
-      <button onclick="downloadInvoice('${d.id}')">invoice</button>
+
+      <button class="btn invoice"
+        onclick="downloadInvoice('${d.id}')">
+        INVOICE
+      </button>
+
+      <button class="btn whatsapp"
+        onclick="sendWhatsapp('${o.phone}','${o.status}')">
+        WHATSAPP
+      </button>
     </div>
   `;
 });
 
-window.updateStatus = async(id,status)=>{
+window.updateStatus = async(id,status,phone)=>{
   await updateDoc(doc(db,"orders",id),{status});
-  alert("status updated");
+  alert("STATUS UPDATED");
+
+  // AUTO WHATSAPP ALERT
+  sendWhatsapp(phone,status);
 };
+
 </script>
 
-<script src="invoice.js"></script>
+<script>
+function sendWhatsapp(phone,status){
+  const msg =
+    "YOUR ORDER STATUS UPDATE%0A" +
+    "STATUS: " + status + "%0A" +
+    "AJGAR AUTO PARTS";
+
+  window.open(
+    "https://wa.me/" + phone + "?text=" + msg,
+    "_blank"
+  );
+}
+
+function downloadInvoice(id){
+  alert("INVOICE FEATURE READY (PDF CAN BE ADDED)");
+}
+</script>
+
 </body>
 </html>
