@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PRODUCT DETAILS | AJGAR AUTO PARTS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:arial;
+  background:#f6f7fb;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  max-width:420px;
+  margin:auto;
+  padding:20px;
+  border-radius:12px;
+}
+.card img{
+  width:100%;
+  border-radius:10px;
+}
+h2{margin:15px 0 5px}
+.price{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+.desc{
+  font-size:14px;
+  color:#555;
+  margin-bottom:15px;
+}
+button{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+.cart{
+  background:#0f172a;
+  color:#fff;
+}
+.buy{
+  background:#16a34a;
+  color:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card product-card"
+  data-name="Black Rally Hand Guards"
+  data-price="999"
+  data-image="img/handguard.jpg">
+
+  <img src="img/handguard.jpg">
+
+  <h2>Black Rally Hand Guards</h2>
+  <div class="price">₹999</div>
+
+  <div class="desc">
+    High quality hand guards for protection and style.
+    Compatible with most bikes.
+  </div>
+
+  <button class="add-to-cart-btn cart">ADD TO CART</button>
+  <button class="buy-now-btn buy">BUY NOW</button>
+</div>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
