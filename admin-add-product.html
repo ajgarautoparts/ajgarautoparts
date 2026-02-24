@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>add product | admin</title>
+<title>Add Product | Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -66,70 +66,81 @@ button{
 
 <body>
 
-<h2>add new product (admin)</h2>
+<h2>Add New Product (Admin)</h2>
 
 <div class="box">
 
-  <label>product name</label>
-  <input id="name" placeholder="product name">
+  <label>Product name</label>
+  <input id="name">
 
-  <label>price</label>
-  <input id="price" placeholder="price">
+  <label>Price</label>
+  <input id="price">
 
-  <label>offer price (optional)</label>
-  <input id="offer" placeholder="offer price">
+  <label>Offer price (optional)</label>
+  <input id="offer">
 
-  <label>stock quantity</label>
-  <input id="stock" placeholder="stock (example: 10)">
+  <label>Stock quantity</label>
+  <input id="stock">
 
-  <label>image url</label>
-  <input id="image" placeholder="paste image url" oninput="previewImage()">
+  <label>Image url</label>
+  <input id="image" oninput="previewImage()">
 
-  <div class="preview" id="preview">image preview</div>
+  <div class="preview" id="preview">Image preview</div>
 
-  <label>category</label>
+  <label>Category</label>
   <select id="category">
-    <option value="">select category</option>
-    <option value="engine">engine</option>
-    <option value="protection">protection</option>
-    <option value="seats">seats</option>
-    <option value="bodywork">bodywork</option>
-    <option value="luggage">luggage</option>
-    <option value="electrical">electrical</option>
+    <option value="">Select category</option>
+    <option value="engine">Engine</option>
+    <option value="protection">Protection</option>
+    <option value="seats">Seats</option>
+    <option value="bodywork">Bodywork</option>
+    <option value="luggage">Luggage</option>
+    <option value="electrical">Electrical</option>
   </select>
 
-  <label>description</label>
-  <textarea id="desc" placeholder="product description"></textarea>
+  <label>Description</label>
+  <textarea id="desc"></textarea>
 
   <div class="row">
     <div>
-      <label>featured</label>
+      <label>Featured</label>
       <select id="featured">
-        <option value="no">no</option>
-        <option value="yes">yes</option>
+        <option value="no">No</option>
+        <option value="yes">Yes</option>
       </select>
     </div>
 
     <div>
-      <label>status</label>
+      <label>Status</label>
       <select id="status">
-        <option value="active">active</option>
-        <option value="hidden">hidden</option>
+        <option value="active">Active</option>
+        <option value="hidden">Hidden</option>
       </select>
     </div>
   </div>
 
-  <button id="addBtn">add product</button>
+  <button id="addBtn">Add product</button>
 </div>
 
+<!-- Image preview script -->
+<script>
+function previewImage(){
+  const url = document.getElementById("image").value;
+  const box = document.getElementById("preview");
+
+  if(url && url.startsWith("http")){
+    box.innerHTML = `<img src="${url}">`;
+  }else{
+    box.innerHTML = "Image preview";
+  }
+}
+</script>
+
+<!-- Firebase + add product -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  addDoc,
-  collection,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, addDoc, collection, serverTimestamp }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCvJ1h4CYZFr9h20O5zaxN6eoJtsQQypqs",
@@ -140,56 +151,52 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.addProduct = async () => {
+async function addProduct(){
 
-  const name = document.getElementById("name").value.trim();
-  const price = document.getElementById("price").value.trim();
-  const offer = document.getElementById("offer").value.trim();
-  const stock = document.getElementById("stock").value.trim();
-  const image = document.getElementById("image").value.trim();
-  const category = document.getElementById("category").value;
-  const desc = document.getElementById("desc").value.trim();
-  const featured = document.getElementById("featured").value;
-  const status = document.getElementById("status").value;
+  const name = nameEl.value.trim();
+  const price = priceEl.value.trim();
+  const offer = offerEl.value.trim();
+  const stock = stockEl.value.trim();
+  const image = imageEl.value.trim();
+  const category = categoryEl.value;
+  const desc = descEl.value.trim();
+  const featured = featuredEl.value;
+  const status = statusEl.value;
 
-  if (!name || !price || !image || !category || !stock) {
-    alert("PLEASE FILL ALL REQUIRED FIELDS");
+  if(!name || !price || !image || !category || !stock){
+    alert("Please fill all required fields");
     return;
   }
 
-  await addDoc(collection(db, "products"), {
-    name: name,
-    price: Number(price),
+  await addDoc(collection(db,"products"),{
+    name,
+    price:Number(price),
     offerPrice: offer ? Number(offer) : null,
-    stock: Number(stock),
-    image: image,
-    category: category,
-    description: desc,
-    featured: featured === "yes",
-    status: status,
+    stock:Number(stock),
+    image,
+    category,
+    description:desc,
+    featured: featured==="yes",
+    status,
     created: serverTimestamp()
   });
 
-  alert("✅ PRODUCT ADDED SUCCESSFULLY");
-
-  document.querySelectorAll("input, textarea, select").forEach(el => el.value = "");
-};
-<script>
-function previewImage(){
-  const url = document.getElementById("image").value;
-  const box = document.getElementById("preview");
-
-  if(url && url.startsWith("http")){
-    box.innerHTML = `<img src="${url}" />`;
-  }else{
-    box.innerHTML = "image preview";
-  }
+  alert("Product added successfully");
 }
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  ...
-  
+
+const nameEl = document.getElementById("name");
+const priceEl = document.getElementById("price");
+const offerEl = document.getElementById("offer");
+const stockEl = document.getElementById("stock");
+const imageEl = document.getElementById("image");
+const categoryEl = document.getElementById("category");
+const descEl = document.getElementById("desc");
+const featuredEl = document.getElementById("featured");
+const statusEl = document.getElementById("status");
+
+document.getElementById("addBtn")
+  .addEventListener("click", addProduct);
 </script>
-  
+
 </body>
 </html>
